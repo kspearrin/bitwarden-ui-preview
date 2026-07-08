@@ -73,9 +73,8 @@
         </div>
       </div>
 
-      <!-- Search + filter (slides up on scroll) -->
-      <div style="flex-shrink:0;overflow:hidden;max-height:{{ searchMaxHeight }};transition:max-height 0.3s cubic-bezier(0.4,0,0.2,1);">
-      <div style="background:#fff;display:flex;gap:8px;align-items:center;padding:12px 8px 16px 12px;z-index:10;transform:translateY({{ searchTranslate }});transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);">
+      <!-- Search + filter -->
+      <div style="background:#fff;display:flex;gap:8px;align-items:center;padding:12px 8px 16px 12px;flex-shrink:0;z-index:10;">
         <div style="flex:1 0 0;height:40px;min-width:0;background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;">
           <i class="bwi bwi-search" style="font-size:14px;color:#62748e;"></i>
           <span style="flex:1;font-size:14px;line-height:20px;color:#62748e;">Search</span>
@@ -84,7 +83,6 @@
           <i class="bwi bwi-sliders" style="font-size:18px;color:{{ filterIconColor }};"></i>
           <sc-if value="{{ filterActive }}"><span style="position:absolute;top:2px;right:2px;width:10px;height:10px;border-radius:50%;background:#175ddc;border:1.5px solid #fff;"></span></sc-if>
         </button>
-      </div>
       </div>
 
       <!-- Filter chips -->
@@ -102,7 +100,7 @@
       </sc-if>
 
       <!-- List -->
-      <div class="bw-scroll" ref="{{ listRef }}" onScroll="{{ onListScroll }}" style="flex:1;overflow-y:auto;min-height:0;">
+      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;">
         <div style="display:flex;flex-direction:column;align-items:center;padding:0 12px 16px;">
           <sc-if value="{{ hasAutofill }}">
             <div style="display:flex;flex-direction:column;align-items:flex-start;width:100%;">
@@ -288,11 +286,11 @@
       <div style="background:#f7f9fa;border-bottom:1px solid #d5dde8;padding:12px;flex-shrink:0;">
         <p style="padding-left:4px;font-size:16px;line-height:24px;font-weight:500;color:#0f172b;">Settings</p>
       </div>
-      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:12px;display:flex;flex-direction:column;gap:6px;">
+      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:12px;display:flex;flex-direction:column;gap:12px;">
         <sc-for list="{{ settingsItems }}" as="row" hint-placeholder-count="8">
-          <button style="background:#fff;border:1px solid #d5dde8;border-radius:8px;display:flex;align-items:center;gap:12px;padding:8px 12px;width:100%;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
-            <div style="width:24px;height:24px;border-radius:6px;background:#eef6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ row.icon }}" style="font-size:13px;color:#175ddc;"></i></div>
-            <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ row.label }}</span>
+          <button style="background:#fff;border:1px solid #d5dde8;border-radius:12px;display:flex;align-items:center;gap:14px;padding:14px 16px;width:100%;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+            <div style="width:36px;height:36px;border-radius:8px;background:#eef6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ row.icon }}" style="font-size:17px;color:#175ddc;"></i></div>
+            <span style="flex:1;font-size:16px;line-height:22px;font-weight:500;color:#0f172b;">{{ row.label }}</span>
             <i class="bwi bwi-angle-right" style="font-size:15px;color:#62748e;"></i>
           </button>
         </sc-for>
@@ -765,7 +763,6 @@ class Component extends DCLogic {
     showSwitcher: false,
     showFilter: false,
     showNewItem: false,
-    searchCollapsed: false,
     formVault: "My vault",
     showFormVault: false,
     formFolder: null,
@@ -828,22 +825,6 @@ class Component extends DCLogic {
   }
 
   calloutRef = React.createRef();
-  listRef = React.createRef();
-  _lastScroll = 0;
-
-  onListScroll = (e) => {
-    const top = e.target.scrollTop;
-    const last = this._lastScroll;
-    this._lastScroll = top;
-    const collapsed = this.state.searchCollapsed;
-    // Collapse once scrolled past a small threshold while moving down;
-    // expand as soon as the user scrolls up or returns near the top.
-    if (!collapsed && top > 48 && top > last + 2) {
-      this.setState({ searchCollapsed: true, openBeacon: this.state.openBeacon === "filter" ? null : this.state.openBeacon });
-    } else if (collapsed && (top < last - 2 || top <= 8)) {
-      this.setState({ searchCollapsed: false });
-    }
-  };
 
   lsKey() { return "bw_berry_dismissed_" + (this.props.featureVersion || "2024.10"); }
   loadDismissed() {
@@ -1055,9 +1036,7 @@ class Component extends DCLogic {
     ];
     const mkBeacon = (def) => {
       const open = s.openBeacon === def.id;
-      let visible = beaconsEnabled && baseVault && !s.dismissed.includes(def.id);
-      // The filter beacon anchors to the search row, which hides on scroll.
-      if (def.id === "filter" && s.searchCollapsed) visible = false;
+      const visible = beaconsEnabled && baseVault && !s.dismissed.includes(def.id);
       return {
         visible, open, pulse: visible && !open, color: beaconColor,
         title: def.title, desc: def.desc, benefit: def.benefit, isNew: def.isNew,
@@ -1075,9 +1054,6 @@ class Component extends DCLogic {
 
     return {
       bSwitcher, bFilter, bCreate, anyBeaconVisible, calloutRef: this.calloutRef,
-      listRef: this.listRef, onListScroll: this.onListScroll,
-      searchMaxHeight: s.searchCollapsed ? "0px" : "76px",
-      searchTranslate: s.searchCollapsed ? "-100%" : "0",
       isVault: s.screen === "vault",
       isSend: s.screen === "send",
       isGenerator: s.screen === "generator",
