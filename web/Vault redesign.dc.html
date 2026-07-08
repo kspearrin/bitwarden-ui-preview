@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/icons.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/base.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    a { color: rgb(23,93,220); text-decoration: none; }
+    a:hover { color: rgb(13,67,175); }
+    input { font-family: inherit; }
+    ::placeholder { color: rgb(132,150,176); }
+    .bwi { font-style: normal; }
+  </style>
+</helmet>
+<div style="min-height:100%; background:rgb(237,239,243); padding:24px; display:flex; justify-content:center; align-items:flex-start;">
+  <div data-screen-label="Vault web app" style="width:1440px; height:1024px; display:flex; background:rgb(255,255,255); border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(29,41,61,0.14); flex-shrink:0; position:relative;">
+
+    <!-- ============ SIDE NAVIGATION ============ -->
+    <div data-screen-label="Side navigation" style="width:{{sidebarWidth}}; height:100%; background:{{navBg}}; display:flex; flex-direction:column; flex-shrink:0; transition:width 0.22s ease; overflow:hidden;">
+
+      <div style="height:72px; padding:16px 12px 16px 20px; display:flex; flex-direction:row; align-items:center; gap:8px; border-bottom:1px solid rgba(255,255,255,0.1); flex-shrink:0;">
+        <sc-if value="{{expanded}}" hint-placeholder-val="{{true}}">
+          <img src="assets/logo-horizontal-white.svg" alt="Bitwarden" style="height:22px; width:auto;" />
+        </sc-if>
+        <div style="flex:1;"></div>
+        <div onClick="{{onCollapse}}" style="width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(255,255,255); flex-shrink:0;" style-hover="background:rgba(255,255,255,0.1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="display:block;">
+            <rect x="3" y="4.5" width="18" height="15" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="9" y1="4.5" x2="9" y2="19.5" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M13 9.5 L16.5 12 L13 14.5 Z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <div onClick="{{onToggleProductMenu}}" style="height:72px; padding:{{switcherPad}}; display:flex; flex-direction:row; align-items:center; justify-content:{{switcherJustify}}; gap:12px; border-bottom:1px solid rgba(255,255,255,0.1); flex-shrink:0; cursor:pointer;" style-hover="background:rgba(255,255,255,0.04)">
+        <sc-if value="{{expanded}}" hint-placeholder-val="{{true}}">
+          <div style="width:100%; height:56px; border-radius:14px; background:{{switcherRowBg}}; display:flex; flex-direction:row; align-items:center; gap:12px; padding:0 12px; box-sizing:border-box;">
+            <div style="width:32px; height:32px; border-radius:8px; background:rgb(238,246,255); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <i class="bwi bwi-lock" style="font-size:16px; color:{{accent}};"></i>
+            </div>
+            <span style="flex-grow:1; font-size:16px; font-weight:500; line-height:20px; color:rgb(255,255,255); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Password Manager</span>
+            <i class="bwi bwi-angle-up-down" style="font-size:16px; color:rgba(255,255,255,0.85); flex-shrink:0;"></i>
+          </div>
+        </sc-if>
+        <sc-if value="{{collapsedShow}}" hint-placeholder-val="{{false}}">
+          <div style="width:48px; height:32px; border-radius:8px; background:{{switcherPillBg}}; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:2px; flex-shrink:0;">
+            <div style="width:28px; height:28px; border-radius:7px; background:{{switcherTileBg}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <i class="bwi bwi-lock" style="font-size:15px; color:{{switcherLockColor}};"></i>
+            </div>
+            <i class="bwi bwi-angle-up-down" style="font-size:13px; color:{{switcherChevColor}}; flex-shrink:0;"></i>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:4px; padding:12px 12px 8px 12px; align-items:stretch; flex-grow:1; overflow-y:auto; overflow-x:hidden;">
+        <sc-for list="{{navList}}" as="item" hint-placeholder-count="12">
+
+          <sc-if value="{{item.showHeader}}" hint-placeholder-val="{{false}}">
+            <div style="height:28px; padding:6px 6px 2px 8px; display:flex; align-items:center; margin-top:8px;">
+              <span style="font-size:12px; font-weight:600; line-height:20px; letter-spacing:1px; text-transform:uppercase; color:rgb(132,150,176);">{{item.label}}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{item.isItem}}" hint-placeholder-val="{{true}}">
+            <div onClick="{{item.onClick}}" onMouseEnter="{{item.onEnter}}" onMouseLeave="{{item.onLeave}}" style="height:40px; border-radius:12px; padding:8px; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:4px; cursor:pointer; background:{{item.bg}}; width:{{item.w}}; margin:{{item.mg}}; box-sizing:border-box;">
+              <sc-if value="{{item.hasTile}}" hint-placeholder-val="{{false}}">
+                <div style="width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{item.tile}};">
+                  <i class="bwi {{item.icon}}" style="font-size:14px; color:rgb(255,255,255);"></i>
+                </div>
+              </sc-if>
+              <sc-if value="{{item.noTile}}" hint-placeholder-val="{{true}}">
+                <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  <i class="bwi {{item.icon}}" style="font-size:18px; color:rgb(255,255,255);"></i>
+                </div>
+              </sc-if>
+              <sc-if value="{{expanded}}" hint-placeholder-val="{{true}}">
+                <span style="flex-grow:1; padding:0 4px; font-size:16px; font-weight:400; line-height:24px; color:rgb(255,255,255); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{item.label}}</span>
+                <sc-if value="{{item.tChevron}}" hint-placeholder-val="{{false}}">
+                  <div onClick="{{item.onChevron}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border-radius:6px;" style-hover="background:rgba(255,255,255,0.12)">
+                    <i class="bwi bwi-angle-down" style="font-size:14px; color:rgba(255,255,255,0.8); transition:transform 0.18s; transform:{{item.chevronTransform}};"></i>
+                  </div>
+                </sc-if>
+                <sc-if value="{{item.tPlus}}" hint-placeholder-val="{{false}}">
+                  <div style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border-radius:6px;" style-hover="background:rgba(255,255,255,0.12)">
+                    <i class="bwi bwi-plus" style="font-size:16px; color:rgba(255,255,255,0.85);"></i>
+                  </div>
+                </sc-if>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{item.isSubheader}}" hint-placeholder-val="{{false}}">
+            <div style="margin-left:19px; border-left:1px solid rgba(255,255,255,0.14); padding:6px 6px 2px 20px; display:flex; align-items:center; gap:6px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgb(132,150,176)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4.5h8"/><path d="M10 4.5v5l-2.3 3h8.6L14 9.5v-5"/><path d="M12 12.5V20"/></svg>
+              <span style="font-size:12px; font-weight:600; line-height:16px; letter-spacing:1px; text-transform:uppercase; color:rgb(132,150,176);">{{item.label}}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{item.isChild}}" hint-placeholder-val="{{false}}">
+            <div style="margin-left:19px; border-left:1px solid rgba(255,255,255,0.14); padding-left:{{item.guidePad}};">
+              <div onClick="{{item.onClick}}" onMouseEnter="{{item.onEnter}}" onMouseLeave="{{item.onLeave}}" style="height:38px; border-radius:12px; padding:8px; display:flex; flex-direction:row; align-items:center; gap:8px; cursor:pointer; background:{{item.bg}};">
+                <sc-if value="{{item.hasChevron}}" hint-placeholder-val="{{false}}">
+                  <i class="bwi bwi-angle-right" style="font-size:13px; color:rgba(255,255,255,0.7); flex-shrink:0; width:14px;"></i>
+                </sc-if>
+                <i class="bwi {{item.icon}}" style="font-size:16px; color:rgba(255,255,255,0.85); flex-shrink:0;"></i>
+                <span style="flex-grow:1; font-size:14px; font-weight:400; line-height:20px; color:rgba(255,255,255,0.92); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{item.label}}</span>
+              </div>
+            </div>
+          </sc-if>
+
+        </sc-for>
+      </div>
+
+      <div style="padding:16px 12px; display:flex; flex-direction:row; align-items:center; gap:12px; border-top:1px solid rgba(255,255,255,0.1); flex-shrink:0; cursor:pointer;" style-hover="background:rgba(255,255,255,0.04)">
+        <div style="width:40px; height:40px; border-radius:50%; background:rgb(250,98,22); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <span style="font-size:14px; font-weight:500; color:rgb(255,255,255);">DF</span>
+        </div>
+        <sc-if value="{{expanded}}" hint-placeholder-val="{{true}}">
+          <div style="display:flex; flex-direction:column; flex-grow:1; min-width:0;">
+            <span style="font-size:14px; font-weight:500; line-height:20px; color:rgb(255,255,255); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Derek Finnegan</span>
+            <span style="font-size:12px; font-weight:400; line-height:16px; color:rgb(132,150,176); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">derek.finnegan@acme.com</span>
+          </div>
+          <i class="bwi bwi-bell" style="font-size:18px; color:rgba(255,255,255,0.85); flex-shrink:0;"></i>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- ============ PRODUCT SWITCHER MENU (overlay) ============ -->
+    <sc-if value="{{productMenuOpen}}" hint-placeholder-val="{{false}}">
+      <div style="position:absolute; top:{{menuTop}}; left:{{menuLeft}}; width:{{menuWidth}}; background:rgb(255,255,255); border-radius:12px; box-shadow:0 12px 32px rgba(29,41,61,0.24); padding:8px; z-index:60; display:flex; flex-direction:column; gap:2px;">
+        <sc-for list="{{products}}" as="p" hint-placeholder-count="0">
+          <div onClick="{{p.onClick}}" style="height:44px; padding:0 12px; border-radius:8px; display:flex; align-items:center; gap:12px; cursor:pointer; background:{{p.bg}};" style-hover="background:rgb(247,249,250)">
+            <div style="width:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bwi {{p.icon}}" style="font-size:16px; color:{{p.iconColor}};"></i></div>
+            <span style="flex-grow:1; font-size:16px; font-weight:{{p.weight}}; color:rgb(15,23,43);">{{p.label}}</span>
+          </div>
+        </sc-for>
+        <sc-if value="{{hasUpsells}}" hint-placeholder-val="{{false}}">
+          <div style="height:1px; background:rgb(233,238,243); margin:6px 8px;"></div>
+          <sc-for list="{{upsells}}" as="u" hint-placeholder-count="0">
+            <div onClick="{{u.onClick}}" style="padding:10px 12px; border-radius:8px; display:flex; align-items:center; gap:12px; cursor:pointer;" style-hover="background:rgb(247,249,250)">
+              <div style="width:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bwi {{u.icon}}" style="font-size:16px; color:rgb(69,85,108);"></i></div>
+              <div style="flex-grow:1; display:flex; flex-direction:column;">
+                <span style="font-size:15px; font-weight:500; color:rgb(15,23,43); line-height:20px;">{{u.title}}</span>
+                <span style="font-size:13px; color:rgb(69,85,108); line-height:18px;">{{u.subtitle}}</span>
+              </div>
+              <i class="bwi bwi-angle-right" style="font-size:15px; color:rgb(132,150,176); flex-shrink:0;"></i>
+            </div>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ============ CUSTOMIZE VIEW DIALOG (overlay) ============ -->
+    <sc-if value="{{customizeOpen}}" hint-placeholder-val="{{false}}">
+      <div onClick="{{onCloseCustomize}}" style="position:absolute; inset:0; background:rgba(15,23,43,0.4); z-index:80; display:flex; align-items:center; justify-content:center;">
+        <div onClick="{{stopProp}}" style="width:432px; background:rgb(255,255,255); border-radius:12px; box-shadow:0 24px 56px rgba(29,41,61,0.28); padding:24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <span style="font-size:20px; font-weight:600; color:rgb(15,23,43);">Customize your view</span>
+            <div onClick="{{onCloseCustomize}}" style="width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(69,85,108);" style-hover="background:rgb(247,249,250)"><i class="bwi bwi-close" style="font-size:18px;"></i></div>
+          </div>
+          <span style="font-size:13px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; color:rgb(98,116,142);">Show columns</span>
+          <div style="display:flex; flex-direction:column; gap:12px; margin-top:12px;">
+            <sc-for list="{{customizeRows}}" as="col" hint-placeholder-count="3">
+              <div onClick="{{col.onToggle}}" style="height:56px; padding:0 16px; border:1px solid {{col.rowBorder}}; border-radius:10px; background:{{col.rowBg}}; display:flex; align-items:center; justify-content:space-between; cursor:pointer;">
+                <span style="font-size:15px; font-weight:500; color:rgb(15,23,43);">{{col.label}}</span>
+                <div style="width:44px; height:24px; border-radius:12px; background:{{col.trackBg}}; position:relative; transition:background 0.15s; flex-shrink:0;">
+                  <div style="width:20px; height:20px; border-radius:50%; background:rgb(255,255,255); position:absolute; top:2px; left:{{col.knobX}}; transition:left 0.15s; box-shadow:0 1px 2px rgba(29,41,61,0.3);"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:24px;">
+            <div onClick="{{onCloseCustomize}}" style="height:40px; padding:0 20px; border-radius:8px; background:{{accent}}; display:flex; align-items:center; cursor:pointer;" style-hover="filter:brightness(0.92)"><span style="font-size:14px; font-weight:500; color:rgb(255,255,255);">Done</span></div>
+            <div onClick="{{onResetCols}}" style="height:40px; padding:0 20px; border:1px solid rgb(213,221,232); border-radius:8px; background:rgb(255,255,255); display:flex; align-items:center; cursor:pointer; color:rgb(16,24,40);" style-hover="background:rgb(247,249,250)"><span style="font-size:14px; font-weight:500;">Reset to default</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ ADD / EDIT FOLDER DIALOG (overlay) ============ -->
+    <sc-if value="{{folderModalOpen}}" hint-placeholder-val="{{false}}">
+      <div onClick="{{closeFolderModal}}" style="position:absolute; inset:0; background:rgba(15,23,43,0.4); z-index:80; display:flex; align-items:center; justify-content:center;">
+        <div onClick="{{stopProp}}" style="width:480px; background:rgb(255,255,255); border-radius:12px; box-shadow:0 24px 56px rgba(29,41,61,0.28); padding:24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+            <span style="font-size:20px; font-weight:600; color:rgb(15,23,43);">{{folderModalTitle}}</span>
+            <div onClick="{{closeFolderModal}}" style="width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(69,85,108);" style-hover="background:rgb(247,249,250)"><i class="bwi bwi-close" style="font-size:18px;"></i></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="font-size:13px; font-weight:600; color:rgb(69,85,108);">Name</span>
+              <input value="{{folderModalName}}" onInput="{{onFolderName}}" placeholder="e.g. Banking" style="height:40px; border:1px solid rgb(213,221,232); border-radius:8px; padding:0 12px; font-size:14px; color:rgb(15,23,43); outline:none;" />
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <span style="font-size:13px; font-weight:600; color:rgb(69,85,108);">Description</span>
+              <textarea value="{{folderModalDesc}}" onInput="{{onFolderDesc}}" placeholder="Optional" style="min-height:72px; resize:vertical; border:1px solid rgb(213,221,232); border-radius:8px; padding:10px 12px; font-size:14px; color:rgb(15,23,43); outline:none; font-family:inherit; line-height:20px;"></textarea>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:24px;">
+            <div onClick="{{saveFolder}}" style="height:40px; padding:0 20px; border-radius:8px; background:{{accent}}; display:flex; align-items:center; cursor:pointer;" style-hover="filter:brightness(0.92)"><span style="font-size:14px; font-weight:500; color:rgb(255,255,255);">Save</span></div>
+            <div onClick="{{closeFolderModal}}" style="height:40px; padding:0 20px; border:1px solid rgb(213,221,232); border-radius:8px; background:rgb(255,255,255); display:flex; align-items:center; cursor:pointer; color:rgb(16,24,40);" style-hover="background:rgb(247,249,250)"><span style="font-size:14px; font-weight:500;">Cancel</span></div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ MAIN AREA ============ -->
+    <div style="flex:1; min-width:0; height:100%; display:flex; flex-direction:column; background:rgb(255,255,255);">
+
+      <!-- Page header -->
+      <div style="padding:32px 40px; display:flex; flex-direction:row; align-items:center; gap:12px; flex-shrink:0;">
+        <sc-if value="{{single}}" hint-placeholder-val="{{true}}">
+          <div style="width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:{{titleTile}};">
+            <i class="bwi {{titleIcon}}" style="font-size:20px; color:rgb(255,255,255);"></i>
+          </div>
+          <span style="font-size:30px; font-weight:500; line-height:45px; color:rgb(15,23,43);">{{titleText}}</span>
+        </sc-if>
+        <sc-if value="{{breadcrumb}}" hint-placeholder-val="{{false}}">
+          <sc-for list="{{crumbs}}" as="c" hint-placeholder-count="2">
+            <sc-if value="{{c.showSep}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-angle-right" style="font-size:16px; color:rgb(132,150,176); margin:0 4px;"></i></sc-if>
+            <sc-if value="{{c.hasTile}}" hint-placeholder-val="{{true}}">
+              <div style="width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; background:{{c.tile}}; flex-shrink:0;">
+                <i class="bwi {{c.icon}}" style="font-size:15px; color:rgb(255,255,255);"></i>
+              </div>
+            </sc-if>
+            <sc-if value="{{c.noTile}}" hint-placeholder-val="{{false}}">
+              <i class="bwi {{c.icon}}" style="font-size:20px; color:{{c.iconColor}};"></i>
+            </sc-if>
+            <span onClick="{{c.onClick}}" style="font-size:20px; font-weight:500; line-height:28px; color:{{c.color}}; cursor:{{c.cursor}};">{{c.label}}</span>
+          </sc-for>
+        </sc-if>
+      </div>
+
+      <!-- Scrollable content -->
+      <div style="flex:1; min-height:0; overflow-y:auto; padding:0 40px 32px 40px;">
+        <div style="border-radius:12px; border:1px solid rgb(213,221,232); background:rgb(255,255,255); box-shadow:0 1px 2px rgba(29,41,61,0.04); overflow:hidden; display:flex; flex-direction:column;">
+
+          <!-- Toolbar: header -->
+          <div style="height:80px; padding:20px; display:flex; flex-direction:row; align-items:center; justify-content:space-between; border-bottom:1px solid rgb(213,221,232);">
+            <div style="width:420px; height:40px; border:1px solid rgb(213,221,232); border-radius:8px; background:rgb(255,255,255); display:flex; flex-direction:row; align-items:center; gap:8px; padding:0 12px; flex-shrink:0;">
+              <i class="bwi bwi-search" style="font-size:16px; color:rgb(98,116,142);"></i>
+              <input value="{{query}}" onInput="{{onSearch}}" placeholder="{{searchPlaceholder}}" style="flex:1; min-width:0; border:none; outline:none; background:transparent; font-size:14px; color:rgb(15,23,43);" />
+              <div style="display:flex; flex-direction:row; align-items:center; gap:4px; flex-shrink:0;">
+                <div style="height:22px; padding:0 6px; border:1px solid rgb(213,221,232); border-radius:6px; display:flex; align-items:center; justify-content:center;"><span style="font-family:Menlo,ui-monospace,monospace; font-size:12px; color:rgb(98,116,142);">ctrl</span></div>
+                <span style="font-family:Menlo,ui-monospace,monospace; font-size:12px; color:rgb(98,116,142);">+</span>
+                <div style="width:22px; height:22px; border:1px solid rgb(213,221,232); border-radius:6px; display:flex; align-items:center; justify-content:center;"><span style="font-family:Menlo,ui-monospace,monospace; font-size:12px; color:rgb(98,116,142);">F</span></div>
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:row; align-items:center; gap:12px; flex-shrink:0;">
+              <sc-if value="{{showImport}}" hint-placeholder-val="{{true}}">
+                <div style="height:40px; padding:0 16px; border:1px solid rgb(213,221,232); border-radius:8px; background:rgb(255,255,255); display:flex; align-items:center; gap:8px; cursor:pointer; color:rgb(16,24,40);" style-hover="background:rgb(247,249,250)">
+                  <i class="bwi bwi-download" style="font-size:16px;"></i><span style="font-size:14px; font-weight:500;">Import</span>
+                </div>
+              </sc-if>
+              <sc-if value="{{showCustomize}}" hint-placeholder-val="{{false}}">
+                <div onClick="{{onCustomize}}" style="height:40px; padding:0 16px; border:1px solid rgb(213,221,232); border-radius:8px; background:rgb(255,255,255); display:flex; align-items:center; gap:8px; cursor:pointer; color:rgb(16,24,40);" style-hover="background:rgb(247,249,250)">
+                  <i class="bwi bwi-grid" style="font-size:16px;"></i><span style="font-size:14px; font-weight:500;">Customize</span>
+                </div>
+              </sc-if>
+              <div onClick="{{onAddPrimary}}" style="height:40px; padding:0 16px; border-radius:8px; background:{{accent}}; display:flex; align-items:center; gap:8px; cursor:pointer; color:rgb(255,255,255);" style-hover="filter:brightness(0.92)">
+                <i class="bwi bwi-plus" style="font-size:16px;"></i><span style="font-size:14px; font-weight:500;">{{addLabel}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Toolbar: drawer (filter chips) -->
+          <sc-if value="{{showDrawer}}" hint-placeholder-val="{{true}}">
+          <div style="height:56px; padding:12px 20px; display:flex; flex-direction:row; align-items:center; gap:16px;">
+            <sc-if value="{{isItemsTable}}" hint-placeholder-val="{{true}}">
+              <div style="position:relative; flex-shrink:0;">
+                <div onClick="{{onToggleTypeMenu}}" style="height:28px; padding:4px 10px; border:1px solid {{typeChipBorder}}; border-radius:8px; background:{{typeChipBg}}; display:flex; align-items:center; gap:6px; cursor:pointer; transition:background 0.12s, border-color 0.12s;">
+                  <span style="font-size:14px; font-weight:{{typeChipWeight}}; color:{{typeChipColor}};">{{typeLabel}}</span>
+                  <sc-if value="{{typeActive}}" hint-placeholder-val="{{false}}">
+                    <div onClick="{{onClearType}}" style="width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:4px; margin-left:2px;" style-hover="background:rgba(23,93,220,0.14)"><i class="bwi bwi-close" style="font-size:12px; color:{{typeChipColor}};"></i></div>
+                  </sc-if>
+                  <sc-if value="{{typeInactive}}" hint-placeholder-val="{{true}}">
+                    <i class="bwi bwi-angle-down" style="font-size:12px; color:rgb(132,150,176); transition:transform 0.15s; transform:{{typeChevron}};"></i>
+                  </sc-if>
+                </div>
+                <sc-if value="{{typeMenuOpen}}" hint-placeholder-val="{{false}}">
+                  <div onClick="{{stopProp}}" style="position:absolute; top:36px; left:0; width:240px; background:rgb(255,255,255); border:1px solid rgb(213,221,232); border-radius:12px; box-shadow:0 12px 32px rgba(29,41,61,0.18); padding:6px; z-index:55; display:flex; flex-direction:column; gap:2px;">
+                    <sc-for list="{{typeOptions}}" as="opt" hint-placeholder-count="6">
+                      <div onClick="{{opt.onClick}}" style="height:40px; padding:0 12px; border-radius:8px; display:flex; align-items:center; gap:12px; cursor:pointer; background:{{opt.rowBg}};" style-hover="background:rgb(247,249,250)">
+                        <div style="width:18px; height:18px; border-radius:50%; border:2px solid {{opt.radioBorder}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                          <sc-if value="{{opt.selected}}" hint-placeholder-val="{{false}}"><div style="width:9px; height:9px; border-radius:50%; background:{{accent}};"></div></sc-if>
+                        </div>
+                        <span style="flex-grow:1; font-size:14px; font-weight:{{opt.weight}}; color:rgb(15,23,43);">{{opt.label}}</span>
+                        <span style="font-size:13px; color:rgb(132,150,176);">{{opt.count}}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="width:1px; height:28px; background:rgb(213,221,232); flex-shrink:0;"></div>
+              <div onClick="{{onFav}}" style="height:28px; padding:4px 10px; border:1px solid {{favChipBorder}}; border-radius:8px; background:{{favChipBg}}; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;">
+                <i class="bwi bwi-star" style="font-size:13px; color:{{favChipColor}};"></i><span style="font-size:14px; color:{{favChipColor}};">Favorites</span>
+              </div>
+              <sc-for list="{{itemFilters}}" as="f" hint-placeholder-count="2">
+                <div style="position:relative; flex-shrink:0;">
+                  <div onClick="{{f.onToggle}}" style="height:28px; padding:4px 10px; border:1px solid {{f.chipBorder}}; border-radius:8px; background:{{f.chipBg}}; display:flex; align-items:center; gap:6px; cursor:pointer; transition:background 0.12s,border-color 0.12s;">
+                    <span style="font-size:14px; font-weight:{{f.chipWeight}}; color:{{f.chipColor}};">{{f.label}}</span>
+                    <sc-if value="{{f.showBerry}}" hint-placeholder-val="{{false}}">
+                      <div style="min-width:18px; height:18px; padding:0 5px; border-radius:9px; background:{{accent}}; display:flex; align-items:center; justify-content:center;"><span style="font-size:11px; font-weight:600; color:rgb(255,255,255);">{{f.berry}}</span></div>
+                    </sc-if>
+                    <sc-if value="{{f.active}}" hint-placeholder-val="{{false}}">
+                      <div onClick="{{f.onClear}}" style="width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:4px;" style-hover="background:rgba(23,93,220,0.14)"><i class="bwi bwi-close" style="font-size:12px; color:{{f.chipColor}};"></i></div>
+                    </sc-if>
+                    <sc-if value="{{f.inactive}}" hint-placeholder-val="{{true}}">
+                      <i class="bwi bwi-angle-down" style="font-size:12px; color:rgb(132,150,176); transition:transform 0.15s; transform:{{f.chevron}};"></i>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
+                    <div onClick="{{stopProp}}" style="position:absolute; top:36px; left:0; width:{{f.menuWidth}}; background:rgb(255,255,255); border:1px solid rgb(213,221,232); border-radius:12px; box-shadow:0 12px 32px rgba(29,41,61,0.18); padding:6px; z-index:55; display:flex; flex-direction:column;">
+                      <div style="display:flex; flex-direction:column; gap:2px; max-height:280px; overflow-y:auto;">
+                        <sc-for list="{{f.rows}}" as="opt" hint-placeholder-count="3">
+                          <div onClick="{{opt.onToggle}}" style="height:40px; padding-left:{{opt.indent}}; padding-right:12px; border-radius:8px; display:flex; align-items:center; gap:8px; cursor:pointer; background:{{opt.rowBg}};" style-hover="background:rgb(247,249,250)">
+                            <sc-if value="{{opt.showArrow}}" hint-placeholder-val="{{false}}">
+                              <div onClick="{{opt.onExpand}}" style="width:18px; height:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; border-radius:4px;" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-angle-right" style="font-size:12px; color:rgb(69,85,108); transition:transform 0.15s; transform:{{opt.expandTransform}};"></i></div>
+                            </sc-if>
+                            <sc-if value="{{opt.showSlot}}" hint-placeholder-val="{{false}}"><div style="width:18px; flex-shrink:0;"></div></sc-if>
+                            <div style="width:18px; height:18px; border-radius:5px; border:1px solid {{opt.cbBorder}}; background:{{opt.cbBg}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                              <sc-if value="{{opt.showCheck}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                              <sc-if value="{{opt.showDash}}" hint-placeholder-val="{{false}}"><div style="width:9px; height:2px; border-radius:1px; background:rgb(255,255,255);"></div></sc-if>
+                            </div>
+                            <span style="flex-grow:1; font-size:14px; color:rgb(15,23,43); white-space:nowrap;">{{opt.label}}</span>
+                            <span style="font-size:13px; color:rgb(132,150,176);">{{opt.count}}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{f.hasSelection}}" hint-placeholder-val="{{false}}">
+                        <div style="border-top:1px solid rgb(233,238,243); margin-top:4px; padding:10px 12px 4px; display:flex; align-items:center; justify-content:space-between;">
+                          <span style="font-size:13px; color:rgb(69,85,108);">{{f.footerCount}}</span>
+                          <div onClick="{{f.onClear}}" style="display:flex; align-items:center; gap:6px; cursor:pointer; color:rgb(69,85,108);" style-hover="color:rgb(23,93,220)"><i class="bwi bwi-close-circle" style="font-size:14px;"></i><span style="font-size:13px; font-weight:500;">Clear</span></div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{isShared}}" hint-placeholder-val="{{false}}">
+              <div onClick="{{onPinned}}" style="height:28px; padding:4px 10px; border:1px solid {{pinnedChipBorder}}; border-radius:8px; background:{{pinnedChipBg}}; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="{{pinnedChipColor}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4.5h8"/><path d="M10 4.5v5l-2.3 3h8.6L14 9.5v-5"/><path d="M12 12.5V20"/></svg>
+                <span style="font-size:14px; color:{{pinnedChipColor}};">Pinned</span>
+              </div>
+              <sc-for list="{{permFilters}}" as="f" hint-placeholder-count="1">
+                <div style="position:relative; flex-shrink:0;">
+                  <div onClick="{{f.onToggle}}" style="height:28px; padding:4px 10px; border:1px solid {{f.chipBorder}}; border-radius:8px; background:{{f.chipBg}}; display:flex; align-items:center; gap:6px; cursor:pointer; transition:background 0.12s,border-color 0.12s;">
+                    <span style="font-size:14px; font-weight:{{f.chipWeight}}; color:{{f.chipColor}};">{{f.label}}</span>
+                    <sc-if value="{{f.showBerry}}" hint-placeholder-val="{{false}}">
+                      <div style="min-width:18px; height:18px; padding:0 5px; border-radius:9px; background:{{accent}}; display:flex; align-items:center; justify-content:center;"><span style="font-size:11px; font-weight:600; color:rgb(255,255,255);">{{f.berry}}</span></div>
+                    </sc-if>
+                    <sc-if value="{{f.active}}" hint-placeholder-val="{{false}}">
+                      <div onClick="{{f.onClear}}" style="width:16px; height:16px; display:flex; align-items:center; justify-content:center; border-radius:4px;" style-hover="background:rgba(23,93,220,0.14)"><i class="bwi bwi-close" style="font-size:12px; color:{{f.chipColor}};"></i></div>
+                    </sc-if>
+                    <sc-if value="{{f.inactive}}" hint-placeholder-val="{{true}}">
+                      <i class="bwi bwi-angle-down" style="font-size:12px; color:rgb(132,150,176); transition:transform 0.15s; transform:{{f.chevron}};"></i>
+                    </sc-if>
+                  </div>
+                  <sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
+                    <div onClick="{{stopProp}}" style="position:absolute; top:36px; left:0; width:{{f.menuWidth}}; background:rgb(255,255,255); border:1px solid rgb(213,221,232); border-radius:12px; box-shadow:0 12px 32px rgba(29,41,61,0.18); padding:6px; z-index:55; display:flex; flex-direction:column;">
+                      <div style="display:flex; flex-direction:column; gap:2px; max-height:280px; overflow-y:auto;">
+                        <sc-for list="{{f.rows}}" as="opt" hint-placeholder-count="2">
+                          <div onClick="{{opt.onToggle}}" style="height:40px; padding-left:{{opt.indent}}; padding-right:12px; border-radius:8px; display:flex; align-items:center; gap:8px; cursor:pointer; background:{{opt.rowBg}};" style-hover="background:rgb(247,249,250)">
+                            <sc-if value="{{opt.showArrow}}" hint-placeholder-val="{{false}}">
+                              <div onClick="{{opt.onExpand}}" style="width:18px; height:18px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; border-radius:4px;" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-angle-right" style="font-size:12px; color:rgb(69,85,108); transition:transform 0.15s; transform:{{opt.expandTransform}};"></i></div>
+                            </sc-if>
+                            <sc-if value="{{opt.showSlot}}" hint-placeholder-val="{{false}}"><div style="width:18px; flex-shrink:0;"></div></sc-if>
+                            <div style="width:18px; height:18px; border-radius:5px; border:1px solid {{opt.cbBorder}}; background:{{opt.cbBg}}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                              <sc-if value="{{opt.showCheck}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                              <sc-if value="{{opt.showDash}}" hint-placeholder-val="{{false}}"><div style="width:9px; height:2px; border-radius:1px; background:rgb(255,255,255);"></div></sc-if>
+                            </div>
+                            <span style="flex-grow:1; font-size:14px; color:rgb(15,23,43); white-space:nowrap;">{{opt.label}}</span>
+                            <span style="font-size:13px; color:rgb(132,150,176);">{{opt.count}}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{f.hasSelection}}" hint-placeholder-val="{{false}}">
+                        <div style="border-top:1px solid rgb(233,238,243); margin-top:4px; padding:10px 12px 4px; display:flex; align-items:center; justify-content:space-between;">
+                          <span style="font-size:13px; color:rgb(69,85,108);">{{f.footerCount}}</span>
+                          <div onClick="{{f.onClear}}" style="display:flex; align-items:center; gap:6px; cursor:pointer; color:rgb(69,85,108);" style-hover="color:rgb(23,93,220)"><i class="bwi bwi-close-circle" style="font-size:14px;"></i><span style="font-size:13px; font-weight:500;">Clear</span></div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </sc-if>
+            <sc-if value="{{clearVisible}}" hint-placeholder-val="{{false}}">
+              <div onClick="{{onClear}}" style="height:32px; padding:0 10px; border-radius:8px; display:flex; align-items:center; gap:6px; cursor:pointer; color:rgb(16,24,40); flex-shrink:0;" style-hover="background:rgb(247,249,250)">
+                <i class="bwi bwi-close" style="font-size:14px;"></i><span style="font-size:14px; font-weight:500;">Clear all</span>
+              </div>
+            </sc-if>
+            <div style="flex-grow:1; display:flex; align-items:center; justify-content:flex-end; gap:4px;">
+              <span style="font-size:14px; font-weight:600; color:rgb(15,23,43);">{{count}}</span>
+              <span style="font-size:14px; font-weight:400; color:rgb(69,85,108);">{{countLabel}}</span>
+            </div>
+          </div>
+          </sc-if>
+
+          <!-- ===== ITEMS TABLE ===== -->
+          <sc-if value="{{isItemsTable}}" hint-placeholder-val="{{true}}">
+            <div style="display:flex; flex-direction:row; align-items:center; height:48px; background:rgb(247,249,250); border-top:1px solid rgb(213,221,232); border-bottom:1px solid rgb(213,221,232);">
+              <div style="width:56px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;">
+                <div onClick="{{onToggleAll}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                  <div style="width:16px; height:16px; border-radius:4px; border:1px solid {{headerCbBorder}}; background:{{headerCbBg}}; display:flex; align-items:center; justify-content:center;">
+                    <sc-if value="{{allChecked}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                  </div>
+                </div>
+              </div>
+              <div onClick="{{onSort}}" style="width:280px; padding:0 12px; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;">
+                <span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Name</span>
+                <i class="bwi bwi-arrow-down" style="font-size:12px; color:rgb(69,85,108); transition:transform 0.15s; transform:{{sortTransform}};"></i>
+              </div>
+              <sc-if value="{{showVaultCol}}" hint-placeholder-val="{{true}}">
+                <div style="flex:1; min-width:0; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Vault</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              </sc-if>
+              <sc-if value="{{showSharedCol}}" hint-placeholder-val="{{true}}">
+                <div style="flex:1; min-width:0; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Shared folders</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              </sc-if>
+              <sc-if value="{{showFolderCol}}" hint-placeholder-val="{{true}}">
+                <div style="flex:1; min-width:0; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">My folders</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              </sc-if>
+              <div style="width:85px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Options</span></div>
+            </div>
+
+            <sc-for list="{{rows}}" as="row" hint-placeholder-count="0">
+              <div onMouseEnter="{{row.onEnter}}" onMouseLeave="{{row.onLeave}}" style="display:flex; flex-direction:row; align-items:center; height:{{row.rowH}}; background:{{row.rowBg}}; border-bottom:1px solid rgb(233,238,243);">
+                <div style="width:56px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;">
+                  <div onClick="{{row.onCheck}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                    <div style="width:16px; height:16px; border-radius:4px; border:1px solid {{row.cbBorder}}; background:{{row.cbBg}}; display:flex; align-items:center; justify-content:center;">
+                      <sc-if value="{{row.checked}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                    </div>
+                  </div>
+                </div>
+                <div style="width:280px; padding:0 16px; display:flex; align-items:center; gap:16px; flex-shrink:0;">
+                  <div style="width:24px; height:24px; border-radius:6px; flex-shrink:0; background:rgb(247,249,250); overflow:hidden;">
+                    <img data-fav="{{row.favicon}}" alt="" style="width:24px; height:24px; object-fit:cover; display:block;" />
+                  </div>
+                  <div style="display:flex; flex-direction:column; justify-content:center; flex-grow:1; min-width:0;">
+                    <div style="display:flex; align-items:center; gap:4px;">
+                      <span style="font-size:16px; font-weight:500; line-height:24px; color:rgb(15,23,43); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{row.name}}</span>
+                      <sc-if value="{{row.attach}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-paperclip" style="font-size:13px; color:rgb(98,116,142); flex-shrink:0;"></i></sc-if>
+                      <sc-if value="{{row.fav}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-star-filled" style="font-size:13px; color:rgb(255,181,71); flex-shrink:0;"></i></sc-if>
+                    </div>
+                    <span style="font-size:14px; font-weight:400; line-height:20px; color:rgb(69,85,108); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{row.sub}}</span>
+                  </div>
+                </div>
+                <sc-if value="{{showVaultCol}}" hint-placeholder-val="{{true}}">
+                  <div style="flex:1; min-width:0; padding:0 16px; display:flex; align-items:center; gap:8px;">
+                    <div style="width:16px; height:16px; border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{row.vaultColor}};"><i class="bwi {{row.vaultIcon}}" style="font-size:9px; color:rgb(255,255,255);"></i></div>
+                    <span style="font-size:14px; color:rgb(15,23,43); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{row.vaultName}}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{showSharedCol}}" hint-placeholder-val="{{true}}">
+                  <div style="flex:1; min-width:0; padding:0 16px; display:flex; align-items:center; gap:8px;">
+                    <sc-if value="{{row.sharedNone}}" hint-placeholder-val="{{false}}"><span style="font-size:14px; color:rgb(132,150,176);">—</span></sc-if>
+                    <sc-for list="{{row.sharedChips}}" as="chip" hint-placeholder-count="0">
+                      <div style="height:28px; padding:4px 8px; border:1px solid rgb(213,221,232); border-radius:6px; background:rgb(247,249,250); display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                        <i class="bwi bwi-collection-shared" style="font-size:13px; color:rgb(98,116,142);"></i><span style="font-size:14px; font-weight:500; color:rgb(69,85,108); white-space:nowrap;">{{chip}}</span>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{row.sharedExtraShow}}" hint-placeholder-val="{{false}}"><div style="height:28px; padding:4px 8px; border:1px solid rgb(213,221,232); border-radius:6px; background:rgb(247,249,250); display:flex; align-items:center; flex-shrink:0;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">{{row.sharedExtra}}</span></div></sc-if>
+                  </div>
+                </sc-if>
+                <sc-if value="{{showFolderCol}}" hint-placeholder-val="{{true}}">
+                  <div style="flex:1; min-width:0; padding:0 16px; display:flex; align-items:center; gap:8px;">
+                    <sc-if value="{{row.folderNone}}" hint-placeholder-val="{{false}}"><span style="font-size:14px; color:rgb(132,150,176);">—</span></sc-if>
+                    <sc-for list="{{row.folderChips}}" as="fchip" hint-placeholder-count="0">
+                      <div style="height:28px; padding:4px 8px; border:1px solid rgb(213,221,232); border-radius:6px; background:rgb(247,249,250); display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                        <i class="bwi bwi-folder" style="font-size:13px; color:rgb(98,116,142);"></i><span style="font-size:14px; font-weight:500; color:rgb(69,85,108); white-space:nowrap;">{{fchip}}</span>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{row.folderExtraShow}}" hint-placeholder-val="{{false}}"><div style="height:28px; padding:4px 8px; border:1px solid rgb(213,221,232); border-radius:6px; background:rgb(247,249,250); display:flex; align-items:center; flex-shrink:0;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">{{row.folderExtra}}</span></div></sc-if>
+                  </div>
+                </sc-if>
+                <div style="width:85px; padding:0 16px; display:flex; align-items:center; justify-content:flex-end; gap:4px; flex-shrink:0;">
+                  <sc-if value="{{row.showActions}}" hint-placeholder-val="{{false}}">
+                    <div style="width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(98,116,142);" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-star" style="font-size:15px;"></i></div>
+                    <div style="width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(98,116,142);" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-copy" style="font-size:15px;"></i></div>
+                  </sc-if>
+                  <div style="width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(98,116,142);" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-more-horizontal" style="font-size:15px;"></i></div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+              <div style="padding:64px 20px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <i class="bwi bwi-search" style="font-size:32px; color:rgb(132,150,176);"></i>
+                <span style="font-size:16px; font-weight:500; color:rgb(15,23,43);">No items found</span>
+                <span style="font-size:14px; color:rgb(69,85,108);">Try adjusting your search or filters.</span>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <!-- ===== SHARED FOLDERS TABLE ===== -->
+          <sc-if value="{{isShared}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex; flex-direction:row; align-items:center; height:48px; background:rgb(247,249,250); border-top:1px solid rgb(213,221,232); border-bottom:1px solid rgb(213,221,232);">
+              <div style="width:56px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;">
+                <div onClick="{{onToggleAll}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                  <div style="width:16px; height:16px; border-radius:4px; border:1px solid {{headerCbBorder}}; background:{{headerCbBg}}; display:flex; align-items:center; justify-content:center;">
+                    <sc-if value="{{allChecked}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                  </div>
+                </div>
+              </div>
+              <div onClick="{{onSort}}" style="flex:1; min-width:0; padding:0 12px; display:flex; align-items:center; gap:6px; cursor:pointer;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Name</span><i class="bwi bwi-arrow-down" style="font-size:12px; color:rgb(69,85,108); transition:transform 0.15s; transform:{{sortTransform}};"></i></div>
+              <div style="width:220px; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Permissions</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              <div style="width:140px; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Items</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              <div style="width:85px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Options</span></div>
+            </div>
+
+            <sc-for list="{{collRows}}" as="cr" hint-placeholder-count="0">
+              <sc-if value="{{cr.isColl}}" hint-placeholder-val="{{true}}">
+                <div onMouseEnter="{{cr.onEnter}}" onMouseLeave="{{cr.onLeave}}" style="display:flex; flex-direction:row; align-items:center; height:64px; background:{{cr.rowBg}}; border-bottom:1px solid rgb(233,238,243);">
+                  <div style="width:56px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;">
+                    <div onClick="{{cr.onCheck}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                      <div style="width:16px; height:16px; border-radius:4px; border:1px solid {{cr.cbBorder}}; background:{{cr.cbBg}}; display:flex; align-items:center; justify-content:center;">
+                        <sc-if value="{{cr.checked}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="flex:1; min-width:0; padding-right:12px; padding-left:{{cr.padLeft}}; display:flex; align-items:center; gap:10px;">
+                    <sc-if value="{{cr.showChevron}}" hint-placeholder-val="{{true}}">
+                      <div onClick="{{cr.onExpand}}" style="width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; border-radius:4px;" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-angle-right" style="font-size:13px; color:rgb(69,85,108); transition:transform 0.15s; transform:{{cr.expandTransform}};"></i></div>
+                    </sc-if>
+                    <sc-if value="{{cr.hideChevron}}" hint-placeholder-val="{{false}}"><div style="width:20px; flex-shrink:0;"></div></sc-if>
+                    <div style="width:32px; height:32px; border-radius:8px; background:rgb(238,246,255); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><i class="bwi bwi-collection-shared" style="font-size:16px; color:{{accent}};"></i></div>
+                    <span style="font-size:16px; font-weight:500; color:rgb(15,23,43); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{cr.name}}</span>
+                    <sc-if value="{{cr.showPin}}" hint-placeholder-val="{{false}}">
+                      <div onClick="{{cr.onPin}}" title="Unpin" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; border-radius:6px; color:{{cr.pinColor}};" style-hover="background:rgb(233,238,243)">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4.5h8"/><path d="M10 4.5v5l-2.3 3h8.6L14 9.5v-5"/><path d="M12 12.5V20"/></svg>
+                      </div>
+                    </sc-if>
+                  </div>
+                  <div style="width:220px; padding:0 12px; display:flex; align-items:center;"><span style="font-size:14px; color:rgb(69,85,108);">{{cr.perm}}</span></div>
+                  <div style="width:140px; padding:0 12px; display:flex; align-items:center;"><span style="font-size:14px; color:rgb(15,23,43);">{{cr.items}}</span></div>
+                  <div style="width:85px; padding:0 16px; display:flex; align-items:center; justify-content:flex-end; flex-shrink:0; position:relative;">
+                    <div onClick="{{cr.onMenu}}" style="width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(98,116,142);" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-more-horizontal" style="font-size:15px;"></i></div>
+                    <sc-if value="{{cr.menuOpen}}" hint-placeholder-val="{{false}}">
+                      <div style="position:absolute; top:34px; right:8px; width:180px; background:rgb(255,255,255); border:1px solid rgb(213,221,232); border-radius:8px; box-shadow:0 8px 24px rgba(29,41,61,0.16); padding:4px; z-index:20; display:flex; flex-direction:column;">
+                        <div onClick="{{cr.onView}}" style="padding:8px 10px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer; color:rgb(15,23,43);" style-hover="background:rgb(247,249,250)"><i class="bwi bwi-list-alt" style="font-size:15px; color:rgb(98,116,142);"></i><span style="font-size:14px;">View items</span></div>
+                        <div onClick="{{cr.onEdit}}" style="padding:8px 10px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer; color:rgb(15,23,43);" style-hover="background:rgb(247,249,250)"><i class="bwi bwi-pencil" style="font-size:15px; color:rgb(98,116,142);"></i><span style="font-size:14px;">Edit</span></div>
+                        <sc-if value="{{cr.notPinned}}" hint-placeholder-val="{{true}}">
+                          <div onClick="{{cr.onPin}}" style="padding:8px 10px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer; color:rgb(15,23,43);" style-hover="background:rgb(247,249,250)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgb(98,116,142)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4.5h8"/><path d="M10 4.5v5l-2.3 3h8.6L14 9.5v-5"/><path d="M12 12.5V20"/></svg><span style="font-size:14px;">Pin</span></div>
+                        </sc-if>
+                        <sc-if value="{{cr.pinned}}" hint-placeholder-val="{{false}}">
+                          <div onClick="{{cr.onPin}}" style="padding:8px 10px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer; color:rgb(15,23,43);" style-hover="background:rgb(247,249,250)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgb(98,116,142)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4.5h8"/><path d="M10 4.5v5l-2.3 3h8.6L14 9.5v-5"/><path d="M12 12.5V20"/><path d="M5 5 L19 19"/></svg><span style="font-size:14px;">Unpin</span></div>
+                        </sc-if>
+                        <div style="height:1px; background:rgb(233,238,243); margin:4px 6px;"></div>
+                        <div onClick="{{cr.onDelete}}" style="padding:8px 10px; border-radius:6px; display:flex; align-items:center; gap:10px; cursor:pointer; color:rgb(191,44,44);" style-hover="background:rgb(253,242,242)"><i class="bwi bwi-trash" style="font-size:15px;"></i><span style="font-size:14px;">Delete</span></div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-for>
+            <sc-if value="{{emptyColl}}" hint-placeholder-val="{{false}}">
+              <div style="padding:64px 20px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <i class="bwi bwi-collection-shared" style="font-size:32px; color:rgb(132,150,176);"></i>
+                <span style="font-size:16px; font-weight:500; color:rgb(15,23,43);">No shared folders</span>
+                <span style="font-size:14px; color:rgb(69,85,108);">Try adjusting your search or filters.</span>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <!-- ===== MY FOLDERS TABLE ===== -->
+          <sc-if value="{{isFolders}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex; flex-direction:row; align-items:center; height:48px; background:rgb(247,249,250); border-top:1px solid rgb(213,221,232); border-bottom:1px solid rgb(213,221,232);">
+              <div style="width:56px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;">
+                <div onClick="{{onToggleAllFolders}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                  <div style="width:16px; height:16px; border-radius:4px; border:1px solid {{folderHeaderCbBorder}}; background:{{folderHeaderCbBg}}; display:flex; align-items:center; justify-content:center;">
+                    <sc-if value="{{fAllChecked}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                  </div>
+                </div>
+              </div>
+              <div onClick="{{onSort}}" style="width:300px; padding:0 12px; display:flex; align-items:center; gap:6px; cursor:pointer; flex-shrink:0;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Name</span><i class="bwi bwi-arrow-down" style="font-size:12px; color:rgb(69,85,108); transition:transform 0.15s; transform:{{folderSortTransform}};"></i></div>
+              <div style="flex:1; min-width:0; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Description</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              <div style="width:160px; padding:0 12px; display:flex; align-items:center; gap:6px;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Items</span><i class="bwi bwi-angle-up-down" style="font-size:12px; color:rgb(132,150,176);"></i></div>
+              <div style="width:110px; padding:0 16px; display:flex; align-items:center; justify-content:flex-end; flex-shrink:0;"><span style="font-size:14px; font-weight:500; color:rgb(69,85,108);">Options</span></div>
+            </div>
+
+            <sc-for list="{{folderRows}}" as="fr" hint-placeholder-count="0">
+              <div style="display:flex; flex-direction:row; align-items:center; min-height:64px; background:rgb(255,255,255); border-bottom:1px solid rgb(233,238,243);" style-hover="background:rgb(247,249,250)">
+                <div style="width:56px; padding:0 16px; display:flex; align-items:center; flex-shrink:0;">
+                  <div onClick="{{fr.onCheck}}" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                    <div style="width:16px; height:16px; border-radius:4px; border:1px solid {{fr.cbBorder}}; background:{{fr.cbBg}}; display:flex; align-items:center; justify-content:center;">
+                      <sc-if value="{{fr.checked}}" hint-placeholder-val="{{false}}"><i class="bwi bwi-check" style="font-size:11px; color:rgb(255,255,255);"></i></sc-if>
+                    </div>
+                  </div>
+                </div>
+                <div style="width:300px; padding:12px; display:flex; align-items:center; flex-shrink:0;">
+                  <span style="font-size:16px; font-weight:500; color:rgb(15,23,43);">{{fr.name}}</span>
+                </div>
+                <div style="flex:1; min-width:0; padding:12px; display:flex; align-items:center;">
+                  <sc-if value="{{fr.hasDesc}}" hint-placeholder-val="{{true}}"><span style="font-size:14px; color:rgb(69,85,108); line-height:20px;">{{fr.desc}}</span></sc-if>
+                  <sc-if value="{{fr.noDesc}}" hint-placeholder-val="{{false}}"><span style="font-size:14px; color:rgb(132,150,176);">—</span></sc-if>
+                </div>
+                <div style="width:160px; padding:12px; display:flex; align-items:center;"><span style="font-size:14px; color:rgb(15,23,43);">{{fr.items}}</span></div>
+                <div style="width:110px; padding:0 16px; display:flex; align-items:center; justify-content:flex-end; gap:6px; flex-shrink:0;">
+                  <div onClick="{{fr.onEdit}}" title="Edit" style="width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(15,23,43);" style-hover="background:rgb(233,238,243)"><i class="bwi bwi-pencil-square" style="font-size:16px;"></i></div>
+                  <div onClick="{{fr.onDelete}}" title="Delete" style="width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgb(191,44,44);" style-hover="background:rgb(253,242,242)"><i class="bwi bwi-trash" style="font-size:16px;"></i></div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{folderEmpty}}" hint-placeholder-val="{{false}}">
+              <div style="padding:64px 20px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <i class="bwi bwi-folder" style="font-size:32px; color:rgb(132,150,176);"></i>
+                <span style="font-size:16px; font-weight:500; color:rgb(15,23,43);">No folders</span>
+                <span style="font-size:14px; color:rgb(69,85,108);">Create a folder to organize your items.</span>
+              </div>
+            </sc-if>
+          </sc-if>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1488,&quot;height&quot;:1072},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;rgb(23,93,220)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;navBg&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;rgb(22,36,85)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;accountProducts&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;With upsells&quot;,&quot;All products&quot;],&quot;default&quot;:&quot;With upsells&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Product switcher&quot;}}">
+class Component extends DCLogic {
+  items = [
+    {id:'i1', name:'Amazon', domain:'amazon.com', sub:'derekfinnegan@gmail', vault:'My vault', fav:true, shared:[], myFolders:['Personal']},
+    {id:'i2', name:'Apple ID', domain:'apple.com', sub:'derekfinnegan@gmail', vault:'My vault', type:'identity', shared:[], myFolders:[]},
+    {id:'i3', name:'Chase Bank', domain:'chase.com', sub:'derekfinnegan@gmail', vault:'My vault', type:'bank', attach:true, shared:[], myFolders:['Finance']},
+    {id:'i4', name:'Google', domain:'google.com', sub:'derekfinnegan@gmail', vault:'My vault', fav:true, shared:[], myFolders:['Personal']},
+    {id:'i5', name:'iCloud', domain:'icloud.com', sub:'derekfinnegan@gmail', vault:'My vault', shared:[], myFolders:['Personal']},
+    {id:'i6', name:'LinkedIn', domain:'linkedin.com', sub:'derekfinnegan@gmail', vault:'My vault', shared:[], myFolders:['Personal']},
+    {id:'i7', name:'Netflix', domain:'netflix.com', sub:'derekfinnegan@gmail', vault:'My vault', fav:true, shared:[], myFolders:['Personal']},
+    {id:'i8', name:'PayPal', domain:'paypal.com', sub:'derekfinnegan@gmail', vault:'My vault', type:'card', shared:[], myFolders:['Finance']},
+    {id:'i9', name:'Spotify', domain:'spotify.com', sub:'derekfinnegan@gmail', vault:'My vault', shared:[], myFolders:['Personal']},
+    {id:'i10', name:'Wells Fargo', domain:'wellsfargo.com', sub:'derekfinnegan@gmail', vault:'My vault', type:'bank', shared:[], myFolders:['Finance']},
+    {id:'i11', name:'Acme', domain:'acme.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations','Shared services'], myFolders:['Work']},
+    {id:'i12', name:'Amazon', domain:'amazon.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations','Shared services'], myFolders:['Work']},
+    {id:'i13', name:'AWS root account', domain:'aws.amazon.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', type:'sshkey', shared:['Engineering','Infrastructure'], myFolders:['Work']},
+    {id:'i14', name:'CircleCI', domain:'circleci.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','CI/CD'], myFolders:['Work']},
+    {id:'i15', name:'Corporate amex', domain:'americanexpress.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', type:'card', shared:['Operations','Finance'], myFolders:['Work']},
+    {id:'i16', name:'Datadog', domain:'datadoghq.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Monitoring'], myFolders:['Work']},
+    {id:'i17', name:'Docker Hub', domain:'docker.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Dev tools'], myFolders:['Work']},
+    {id:'i18', name:'Docusign', domain:'docusign.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations','Shared services'], myFolders:['Work']},
+    {id:'i19', name:'GitHub Enterprise', domain:'github.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Dev tools'], myFolders:['Work']},
+    {id:'i20', name:'Gmail', domain:'gmail.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', type:'identity', shared:['Operations'], myFolders:['Work']},
+    {id:'i21', name:'GitLab', domain:'gitlab.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','CI/CD'], myFolders:['Work']},
+    {id:'i22', name:'Grafana', domain:'grafana.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Monitoring'], myFolders:['Work']},
+    {id:'i23', name:'Hubspot', domain:'hubspot.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Marketing','CRM'], myFolders:['Work']},
+    {id:'i24', name:'Jira cloud', domain:'atlassian.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Project management','Engineering'], myFolders:['Work']},
+    {id:'i25', name:'Mailchimp', domain:'mailchimp.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Marketing'], myFolders:['Work']},
+    {id:'i26', name:'Notion', domain:'notion.so', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations','Shared services'], myFolders:['Work']},
+    {id:'i27', name:'Okta', domain:'okta.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Infrastructure'], myFolders:['Work']},
+    {id:'i28', name:'PagerDuty', domain:'pagerduty.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Monitoring'], myFolders:['Work']},
+    {id:'i29', name:'Salesforce', domain:'salesforce.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Marketing','CRM'], myFolders:['Work']},
+    {id:'i30', name:'Sentry', domain:'sentry.io', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Monitoring'], myFolders:['Work']},
+    {id:'i31', name:'Slack', domain:'slack.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', fav:true, shared:['Operations','Shared services'], myFolders:['Work']},
+    {id:'i32', name:'Snowflake', domain:'snowflake.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Infrastructure'], myFolders:['Work']},
+    {id:'i33', name:'Stripe', domain:'stripe.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', type:'card', shared:['Operations','Finance'], myFolders:['Work']},
+    {id:'i34', name:'Twilio', domain:'twilio.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Dev tools'], myFolders:['Work']},
+    {id:'i35', name:'Vercel', domain:'vercel.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Engineering','Dev tools'], myFolders:['Work']},
+    {id:'i36', name:'Workday', domain:'workday.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations'], myFolders:['Work']},
+    {id:'i37', name:'Zendesk', domain:'zendesk.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations','CRM'], myFolders:['Work']},
+    {id:'i38', name:'Zoom', domain:'zoom.us', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Operations','Shared services'], myFolders:['Work']},
+    {id:'i39', name:'Figma', domain:'figma.com', sub:'d.finnegan@acme.com', vault:'Acme corporation', shared:['Design','Project management'], myFolders:['Work']},
+  ];
+
+  collections = [
+    {name:'Engineering', perm:'Viewer', kids:['CI/CD','Dev tools','Infrastructure','Monitoring']},
+    {name:'Operations', perm:'Viewer', kids:['Shared services','CRM']},
+    {name:'Project management', perm:'Viewer', kids:[]},
+    {name:'Finance', perm:'Viewer', kids:[]},
+    {name:'CI/CD', perm:'Viewer', kids:[], child:true},
+    {name:'Marketing', perm:'Can manage', kids:[]},
+    {name:'Sales', perm:'Viewer', kids:[]},
+    {name:'Design', perm:'Viewer', kids:[]},
+    {name:'Dev tools', perm:'Viewer', kids:[], child:true},
+    {name:'Infrastructure', perm:'Viewer', kids:[], child:true},
+    {name:'Monitoring', perm:'Viewer', kids:[], child:true},
+    {name:'Shared services', perm:'Viewer', kids:[], child:true},
+    {name:'CRM', perm:'Viewer', kids:[], child:true},
+  ];
+
+  folders = [
+    {name:'Banking', desc:'Primary account used for all banking transactions and bill payments', items:6},
+    {name:'Family', desc:'Any accounts used by the Smith family', items:4},
+    {name:'Entertainment', desc:'Subscriptions, concert tickets, etc.', items:2},
+    {name:'Utilities', desc:'Accounts related to 124 Main Street address in Milwaukee.', items:10},
+    {name:'Social media', desc:'', items:10},
+    {name:'Work', desc:'Accounts for Bitwarden', items:27},
+  ];
+
+  state = {
+    nav: 'all',
+    hoveredNav: null,
+    deletedFolders: {},
+    folderSel: {},
+    folderModal: null,
+    collapsed: false,
+    groups: { myvault: false, acme: false },
+    query: '',
+    checked: {},
+    hoveredRow: null,
+    sortAsc: true,
+    favFilter: false,
+    pinnedFilter: false,
+    pins: { 'Engineering': true, 'Operations': true, 'Project management': true },
+    deleted: {},
+    expandedColl: null,
+    openMenu: null,
+    productMenuOpen: false,
+    customizeOpen: false,
+    cols: { vault: true, shared: true, folders: true },
+    typeFilter: 'all',
+    typeMenuOpen: false,
+    filters: { shared: {}, folders: {}, perm: {} },
+    openFilter: null,
+    filterBerry: { shared: 0, folders: 0, perm: 0 },
+    filterExpanded: {},
+  };
+
+  commitBerry(st, key) { return { ...st.filterBerry, [key]: Object.keys(st.filters[key]).length }; }
+  openFilterMenu(key) {
+    this.setState(st => {
+      const upd = { typeMenuOpen: false, openMenu: null, productMenuOpen: false };
+      if (st.openFilter && st.openFilter !== key) upd.filterBerry = this.commitBerry(st, st.openFilter);
+      if (st.openFilter === key) { upd.filterBerry = this.commitBerry(st, key); upd.openFilter = null; }
+      else upd.openFilter = key;
+      return upd;
+    });
+  }
+  toggleFilterNode(key, val, kidVals, currentlyChecked) {
+    this.setState(st => {
+      const cur = { ...st.filters[key] };
+      if (currentlyChecked) { delete cur[val]; (kidVals || []).forEach(v => delete cur[v]); }
+      else { cur[val] = true; (kidVals || []).forEach(v => cur[v] = true); }
+      return { filters: { ...st.filters, [key]: cur } };
+    });
+  }
+  toggleFilterExpand(val) {
+    this.setState(st => ({ filterExpanded: { ...st.filterExpanded, [val]: !st.filterExpanded[val] } }));
+  }
+  clearFilter(key) {
+    this.setState(st => ({ filters: { ...st.filters, [key]: {} }, filterBerry: { ...st.filterBerry, [key]: 0 } }));
+  }
+
+  componentDidMount() {
+    this._closeMenu = () => {
+      const st = this.state;
+      if (st.openMenu || st.productMenuOpen || st.typeMenuOpen || st.openFilter) {
+        const upd = { openMenu: null, productMenuOpen: false, typeMenuOpen: false };
+        if (st.openFilter) { upd.filterBerry = this.commitBerry(st, st.openFilter); upd.openFilter = null; }
+        this.setState(upd);
+      }
+    };
+    document.addEventListener('click', this._closeMenu);
+    this.applyFavicons();
+  }
+  componentDidUpdate() { this.applyFavicons(); }
+  componentWillUnmount() { document.removeEventListener('click', this._closeMenu); }
+  applyFavicons() {
+    document.querySelectorAll('img[data-fav]').forEach(im => {
+      const v = im.getAttribute('data-fav');
+      if (v && v.indexOf('{{') === -1 && im.getAttribute('src') !== v) im.setAttribute('src', v);
+    });
+  }
+
+  selectNav(id) { this.setState({ nav: id, query: '' }); }
+  openVault(group, allId) { this.setState(st => ({ groups: { ...st.groups, [group]: true }, nav: allId, query: '' })); }
+  toggleGroup(id) { this.setState(st => ({ groups: { ...st.groups, [id]: !st.groups[id] } })); }
+  countIn(coll) { return this.items.filter(it => it.vault === 'Acme corporation' && (it.shared || []).includes(coll)).length; }
+
+  renderVals() {
+    const s = this.state;
+    const accent = this.props.accent || 'rgb(23,93,220)';
+    const navBg = this.props.navBg || 'rgb(22,36,85)';
+    const compact = this.props.compact || false;
+    const expanded = !s.collapsed;
+    const sel = s.nav, hov = s.hoveredNav;
+    const SEL = 'rgb(13,67,175)', HOV = 'rgba(255,255,255,0.08)';
+
+    // ===== NAV =====
+    const nl = [];
+    const enter = (id) => () => this.setState({ hoveredNav: id });
+    const leave = () => () => this.setState({ hoveredNav: null });
+    const bgItem = (id) => id === sel ? SEL : (id === hov ? HOV : 'transparent');
+    const bgVault = (id) => id === hov ? HOV : 'transparent'; // never selected
+
+    const pushItem = (o) => nl.push({
+      isItem: true, isHeader: false, isChild: false, isSubheader: false, showHeader: false,
+      tChevron: false, tPlus: false, hasTile: false, tile: '', chevronTransform: 'rotate(0deg)',
+      noTile: !o.hasTile, w: s.collapsed ? '40px' : '100%', mg: s.collapsed ? '0 auto' : '0',
+      bg: o.notSel ? bgVault(o.id) : bgItem(o.id),
+      onClick: o.onClick || (() => this.selectNav(o.id)),
+      onEnter: enter(o.id), onLeave: leave(), ...o,
+    });
+    const pushHeader = (label) => nl.push({ isHeader: true, isItem: false, isChild: false, isSubheader: false, showHeader: expanded, label });
+    const pushSub = (label) => nl.push({ isSubheader: true, isItem: false, isChild: false, isHeader: false, showHeader: false, label });
+    const pushChild = (o) => nl.push({
+      isChild: true, isItem: false, isHeader: false, isSubheader: false, showHeader: false,
+      hasChevron: !!o.chev, guidePad: o.deep ? '20px' : '8px',
+      bg: bgItem(o.id), onClick: () => this.selectNav(o.id), onEnter: enter(o.id), onLeave: leave(), ...o,
+    });
+
+    pushItem({ id: 'all', label: 'All items', icon: 'bwi-list', hasTile: true, tile: accent, noTile: false });
+
+    pushHeader('Vaults');
+    pushItem({ id: 'myvault', label: 'My vault', icon: 'bwi-user', hasTile: true, tile: 'rgb(250,98,22)', noTile: false, tChevron: true, notSel: true,
+      chevronTransform: s.groups.myvault ? 'rotate(180deg)' : 'rotate(0deg)',
+      onClick: () => this.openVault('myvault', 'mv-all'),
+      onChevron: (e) => { e.stopPropagation(); this.toggleGroup('myvault'); } });
+    if (s.groups.myvault && expanded) {
+      pushChild({ id: 'mv-all', label: 'All vault items', icon: 'bwi-list' });
+    }
+    pushItem({ id: 'acme', label: 'Acme corporation', icon: 'bwi-business', hasTile: true, tile: 'rgb(130,0,219)', noTile: false, tChevron: true, notSel: true,
+      chevronTransform: s.groups.acme ? 'rotate(180deg)' : 'rotate(0deg)',
+      onClick: () => this.openVault('acme', 'ac-all'),
+      onChevron: (e) => { e.stopPropagation(); this.toggleGroup('acme'); } });
+    if (s.groups.acme && expanded) {
+      pushChild({ id: 'ac-all', label: 'All vault items', icon: 'bwi-list' });
+      pushChild({ id: 'ac-shared', label: 'Shared folders', icon: 'bwi-collection-shared' });
+      const pinned = this.collections.filter(c => s.pins[c.name] && !s.deleted[c.name]);
+      if (pinned.length) {
+        pushSub('Pinned');
+        pinned.forEach(c => pushChild({ id: 'coll:' + c.name, label: c.name, icon: 'bwi-collection-shared', deep: true, chev: (c.kids && c.kids.length > 0) }));
+      }
+    }
+
+    pushHeader('Tools');
+    pushItem({ id: 'reports', label: 'Reports', icon: 'bwi-dashboard' });
+    pushItem({ id: 'send', label: 'Send', icon: 'bwi-send' });
+    pushItem({ id: 'generator', label: 'Generator', icon: 'bwi-generate' });
+    pushHeader('Manage');
+    pushItem({ id: 'tags', label: 'My folders', icon: 'bwi-folder', tPlus: true });
+    pushItem({ id: 'archive', label: 'Archive', icon: 'bwi-archive' });
+    pushItem({ id: 'trash', label: 'Trash', icon: 'bwi-delete' });
+    pushItem({ id: 'settings', label: 'Settings', icon: 'bwi-settings', tChevron: true, chevronTransform: 'rotate(0deg)', onChevron: (e) => e.stopPropagation() });
+
+    // ===== VIEW RESOLUTION =====
+    const isColl = sel.indexOf('coll:') === 0;
+    const collName = isColl ? sel.slice(5) : null;
+    const isFold = sel.indexOf('fold:') === 0;
+    const foldName = isFold ? sel.slice(5) : null;
+    const isShared = sel === 'ac-shared';
+    const isVaultAll = sel === 'ac-all' || sel === 'mv-all' || isColl || isFold;
+    const vaultOf = (sel === 'mv-all' || isFold) ? 'My vault' : 'Acme corporation';
+    const vaultTile = vaultOf === 'My vault' ? 'rgb(250,98,22)' : 'rgb(130,0,219)';
+    const vaultIcn = vaultOf === 'My vault' ? 'bwi-user' : 'bwi-business';
+    const isFolders = sel === 'tags';
+    const isGlobal = !isShared && !isVaultAll && !isFolders;
+    const isItemsTable = isGlobal || isVaultAll;
+    const cols = s.cols;
+    const showVaultCol = isGlobal && cols.vault;
+    const showSharedCol = cols.shared;
+    const showFolderCol = cols.folders;
+    const customizeRows = [
+      { key: 'vault', label: 'Vault', on: cols.vault, show: isGlobal },
+      { key: 'shared', label: 'Shared folders', on: cols.shared, show: true },
+      { key: 'folders', label: 'Folders', on: cols.folders, show: true },
+    ].filter(c => c.show).map(c => ({
+      key: c.key, label: c.label,
+      trackBg: c.on ? accent : 'rgb(213,221,232)',
+      knobX: c.on ? '22px' : '2px',
+      rowBg: c.on ? 'rgb(238,246,255)' : 'rgb(247,249,250)',
+      rowBorder: c.on ? accent : 'rgb(213,221,232)',
+      onToggle: (e) => { e.stopPropagation(); this.setState(st => ({ cols: { ...st.cols, [c.key]: !st.cols[c.key] } })); },
+    }));
+
+    // ===== BREADCRUMBS =====
+    const titleMap = {
+      all: ['All items', 'bwi-list', accent], reports: ['Reports', 'bwi-dashboard', accent],
+      send: ['Send', 'bwi-send', accent], generator: ['Generator', 'bwi-generate', accent],
+      tags: ['My folders', 'bwi-folder', accent], archive: ['Archive', 'bwi-archive', accent],
+      trash: ['Trash', 'bwi-delete', accent], settings: ['Settings', 'bwi-settings', accent],
+    };
+    let crumbs = [];
+    let single = false, titleText = 'All items', titleIcon = 'bwi-list', titleTile = accent;
+    if (isFolders) { single = true; [titleText, titleIcon, titleTile] = titleMap.tags; }
+    else if (isGlobal && titleMap[sel]) { single = true; [titleText, titleIcon, titleTile] = titleMap[sel]; }
+    else if (isGlobal) { single = true; }
+    else {
+      const goAll = () => this.selectNav(vaultOf === 'My vault' ? 'mv-all' : 'ac-all');
+      crumbs.push({ hasTile: true, noTile: false, tile: vaultTile, icon: vaultIcn, label: vaultOf, color: 'rgb(69,85,108)', cursor: 'pointer', onClick: goAll, showSep: false });
+      if (isShared) crumbs.push({ hasTile: false, noTile: true, icon: 'bwi-collection-shared', iconColor: 'rgb(69,85,108)', label: 'Shared folders', color: 'rgb(15,23,43)', cursor: 'default', showSep: true });
+      else if (isColl) {
+        crumbs.push({ hasTile: false, noTile: true, icon: 'bwi-collection-shared', iconColor: 'rgb(69,85,108)', label: 'Shared folders', color: 'rgb(69,85,108)', cursor: 'pointer', onClick: () => this.selectNav('ac-shared'), showSep: true });
+        crumbs.push({ hasTile: false, noTile: true, icon: 'bwi-collection-shared', iconColor: 'rgb(69,85,108)', label: collName, color: 'rgb(15,23,43)', cursor: 'default', showSep: true });
+      } else if (isFold) crumbs.push({ hasTile: false, noTile: true, icon: 'bwi-folder', iconColor: 'rgb(69,85,108)', label: foldName, color: 'rgb(15,23,43)', cursor: 'default', showSep: true });
+      else crumbs.push({ hasTile: false, noTile: true, icon: 'bwi-list', iconColor: 'rgb(69,85,108)', label: 'All vault items', color: 'rgb(15,23,43)', cursor: 'default', showSep: true });
+    }
+
+    // ===== ITEMS ROWS =====
+    const q = (s.query || '').trim().toLowerCase();
+    let base = this.items.slice();
+    if (isVaultAll) base = base.filter(r => r.vault === vaultOf);
+    if (isColl) base = base.filter(r => (r.shared || []).includes(collName));
+    if (isFold) base = base.filter(r => (r.myFolders || []).includes(foldName));
+    if (isItemsTable && q) base = base.filter(r => r.name.toLowerCase().includes(q) || r.sub.toLowerCase().includes(q));
+
+    // ===== TYPE RADIO FILTER =====
+    const typeDefs = [
+      { id: 'all', label: 'All' }, { id: 'login', label: 'Login' }, { id: 'card', label: 'Card' },
+      { id: 'bank', label: 'Bank account' }, { id: 'identity', label: 'Identity' }, { id: 'sshkey', label: 'SSH key' },
+    ];
+    const typeOf = (r) => r.type || 'login';
+    const typeCount = (id) => id === 'all' ? base.length : base.filter(r => typeOf(r) === id).length;
+    const typeSel = s.typeFilter, typeActive = typeSel !== 'all', typeMenuOpen = s.typeMenuOpen;
+    const selDef = typeDefs.find(t => t.id === typeSel) || typeDefs[0];
+    const typeOptions = typeDefs.map(t => ({
+      id: t.id, label: t.label, count: typeCount(t.id), selected: t.id === typeSel,
+      weight: t.id === typeSel ? '500' : '400', rowBg: t.id === typeSel ? 'rgb(247,249,250)' : 'transparent',
+      radioBorder: t.id === typeSel ? accent : 'rgb(132,150,176)',
+      onClick: (e) => { e.stopPropagation(); this.setState({ typeFilter: t.id }); },
+    }));
+
+    const afterType = typeActive ? base.filter(r => typeOf(r) === typeSel) : base;
+
+    // ===== CHECKBOX FILTER OPTIONS (Shared folders, My folders) =====
+    const sharedCountOf = (n) => afterType.filter(r => (r.shared || []).includes(n)).length;
+    const sharedTree = this.collections.filter(c => !c.child).map(c => ({
+      value: c.name, label: c.name, count: sharedCountOf(c.name),
+      children: (c.kids || []).map(kn => ({ value: kn, label: kn, count: sharedCountOf(kn) })).filter(k => k.count > 0),
+    })).filter(n => n.count > 0);
+    const folderTree = ['Personal', 'Finance', 'Work'].map(f => ({ value: f, label: f, count: afterType.filter(r => (r.myFolders || []).includes(f)).length, children: [] })).filter(o => o.count > 0);
+
+    const selShared = s.filters.shared, selFolders = s.filters.folders;
+    const sharedVals = Object.keys(selShared), folderVals = Object.keys(selFolders);
+    let list = afterType.slice();
+    if (sharedVals.length) list = list.filter(r => (r.shared || []).some(x => selShared[x]));
+    if (folderVals.length) list = list.filter(r => (r.myFolders || []).some(x => selFolders[x]));
+    if (s.favFilter) list = list.filter(r => r.fav);
+    list.sort((a, b) => s.sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    const rowH = '64px';
+    const rows = list.map(r => {
+      const checked = !!s.checked[r.id], hovered = s.hoveredRow === r.id;
+      const sh = r.shared || [], fo = r.myFolders || [];
+      return {
+        id: r.id, favicon: 'https://www.google.com/s2/favicons?domain=' + r.domain + '&sz=64',
+        name: r.name, sub: r.sub, fav: !!r.fav, attach: !!r.attach,
+        vaultName: r.vault, vaultColor: r.vault === 'My vault' ? 'rgb(250,98,22)' : 'rgb(130,0,219)', vaultIcon: r.vault === 'My vault' ? 'bwi-user' : 'bwi-business',
+        sharedNone: sh.length === 0, sharedChips: sh.slice(0, 1), sharedExtraShow: sh.length > 1, sharedExtra: '+' + (sh.length - 1),
+        folderNone: fo.length === 0, folderChips: fo.slice(0, 1), folderExtraShow: false, folderExtra: '',
+        checked, cbBg: checked ? accent : 'rgb(247,249,250)', cbBorder: checked ? accent : 'rgb(132,150,176)',
+        rowBg: hovered ? 'rgb(247,249,250)' : 'rgb(255,255,255)', showActions: hovered, rowH,
+        onEnter: () => this.setState({ hoveredRow: r.id }), onLeave: () => this.setState({ hoveredRow: null }),
+        onCheck: (e) => { e.stopPropagation(); this.setState(st => { const c = { ...st.checked }; if (c[r.id]) delete c[r.id]; else c[r.id] = true; return { checked: c }; }); },
+      };
+    });
+
+    // ===== SHARED FOLDERS ROWS (nested collections) =====
+    const byName = (n) => this.collections.find(c => c.name === n);
+    let filtered = this.collections.filter(c => !s.deleted[c.name]);
+    if (s.pinnedFilter) filtered = filtered.filter(c => s.pins[c.name]);
+    const selPerm = s.filters.perm, permSelVals = Object.keys(selPerm);
+    if (permSelVals.length) filtered = filtered.filter(c => selPerm[c.perm]);
+    if (isShared && q) filtered = filtered.filter(c => c.name.toLowerCase().includes(q));
+    const sharedCount = filtered.length;
+    const top = filtered.filter(c => !c.child).slice()
+      .sort((a, b) => s.sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name))
+      .sort((a, b) => (s.pins[b.name] ? 1 : 0) - (s.pins[a.name] ? 1 : 0));
+    const rowFor = (c, isKid) => {
+      const pinned = !!s.pins[c.name];
+      const checked = !!s.checked['coll:' + c.name], hovered = s.hoveredRow === 'coll:' + c.name;
+      const open = s.expandedColl === c.name;
+      const kids = c.kids || [];
+      const hasKids = !isKid && kids.length > 0;
+      return {
+        isColl: true, name: c.name, perm: c.perm, items: this.countIn(c.name),
+        showChevron: hasKids, hideChevron: !hasKids, expandTransform: open ? 'rotate(90deg)' : 'rotate(0deg)',
+        padLeft: isKid ? '56px' : '12px',
+        showPin: pinned && !isKid, pinned, notPinned: !pinned, pinLabel: pinned ? 'Unpin' : 'Pin', pinColor: 'rgb(30,41,59)',
+        checked, cbBg: checked ? accent : 'rgb(247,249,250)', cbBorder: checked ? accent : 'rgb(132,150,176)',
+        rowBg: hovered ? 'rgb(247,249,250)' : 'rgb(255,255,255)', menuOpen: s.openMenu === c.name,
+        onEnter: () => this.setState({ hoveredRow: 'coll:' + c.name }), onLeave: () => this.setState({ hoveredRow: null }),
+        onCheck: (e) => { e.stopPropagation(); this.setState(st => { const cc = { ...st.checked }; const k = 'coll:' + c.name; if (cc[k]) delete cc[k]; else cc[k] = true; return { checked: cc }; }); },
+        onExpand: (e) => { e.stopPropagation(); this.setState(st => ({ expandedColl: st.expandedColl === c.name ? null : c.name })); },
+        onPin: (e) => { e.stopPropagation(); this.setState(st => ({ pins: { ...st.pins, [c.name]: !st.pins[c.name] }, openMenu: null })); },
+        onMenu: (e) => { e.stopPropagation(); this.setState(st => ({ openMenu: st.openMenu === c.name ? null : c.name })); },
+        onView: (e) => { e.stopPropagation(); this.setState({ openMenu: null, nav: 'coll:' + c.name, query: '' }); },
+        onEdit: (e) => { e.stopPropagation(); this.setState({ openMenu: null }); },
+        onDelete: (e) => { e.stopPropagation(); this.setState(st => ({ deleted: { ...st.deleted, [c.name]: true }, openMenu: null })); },
+      };
+    };
+    const collRows = [];
+    top.forEach(c => {
+      collRows.push(rowFor(c, false));
+      if (s.expandedColl === c.name) (c.kids || []).forEach(kn => { const kc = byName(kn); if (kc && !s.deleted[kc.name]) collRows.push(rowFor(kc, true)); });
+    });
+
+    // ===== HEADER CHECKBOX (context-aware) =====
+    const selIds = isShared ? filtered.map(c => 'coll:' + c.name) : list.map(r => r.id);
+    const allChecked = selIds.length > 0 && selIds.every(id => s.checked[id]);
+    const onToggleAll = () => this.setState(st => { const c = { ...st.checked }; if (allChecked) selIds.forEach(id => delete c[id]); else selIds.forEach(id => c[id] = true); return { checked: c }; });
+
+    const count = isShared ? sharedCount : list.length;
+    const clearVisible = (isItemsTable && (s.favFilter || typeActive || sharedVals.length > 0 || folderVals.length > 0 || q.length > 0)) || (isShared && (s.pinnedFilter || permSelVals.length > 0 || q.length > 0));
+
+    // ===== TYPE CHIP STYLES =====
+    let typeChipBg, typeChipBorder, typeChipColor;
+    if (typeActive) {
+      typeChipBg = typeMenuOpen ? 'rgb(219,234,254)' : 'rgb(238,246,255)';
+      typeChipBorder = accent; typeChipColor = accent;
+    } else {
+      typeChipBg = typeMenuOpen ? 'rgb(233,238,243)' : 'rgb(255,255,255)';
+      typeChipBorder = typeMenuOpen ? 'rgb(203,213,225)' : 'rgb(213,221,232)'; typeChipColor = 'rgb(69,85,108)';
+    }
+
+    // ===== PRODUCT SWITCHER MENU =====
+    const closeProd = () => this.setState({ productMenuOpen: false, openMenu: null });
+    const mode = this.props.accountProducts || 'With upsells';
+    const hasSM = mode === 'All products';
+    const products = [{ label: 'Password Manager', icon: 'bwi-check', iconColor: accent, weight: '600', bg: 'rgb(238,246,255)', onClick: closeProd }];
+    if (hasSM) products.push({ label: 'Secrets Manager', icon: 'bwi-terminal', iconColor: 'rgb(98,116,142)', weight: '400', bg: 'transparent', onClick: closeProd });
+    products.push({ label: 'Admin Console', icon: 'bwi-business', iconColor: 'rgb(98,116,142)', weight: '400', bg: 'transparent', onClick: closeProd });
+    products.push({ label: 'Provider Portal', icon: 'bwi-handshake', iconColor: 'rgb(98,116,142)', weight: '400', bg: 'transparent', onClick: closeProd });
+    const upsells = [];
+    if (!hasSM) {
+      upsells.push({ icon: 'bwi-business', title: 'Share your passwords', subtitle: 'Protect your family or business', onClick: closeProd });
+      upsells.push({ icon: 'bwi-terminal', title: 'Get Secrets Manager', subtitle: 'Secure your infrastructure', onClick: closeProd });
+    }
+
+    // ===== CHECKBOX FILTER CHIPS =====
+    const permBase = this.collections.filter(c => !c.child && !s.deleted[c.name]);
+    const permTree = ['Viewer', 'Can manage'].map(p => ({ value: p, label: p, count: permBase.filter(c => c.perm === p).length, children: [] })).filter(o => o.count > 0);
+    const mkFilter = (key, label, tree, nested) => {
+      const sel = s.filters[key];
+      const exp = s.filterExpanded;
+      const selCount = Object.keys(sel).length;
+      const active = selCount > 0;
+      const open = s.openFilter === key;
+      const berry = s.filterBerry[key];
+      let bg, border, color;
+      if (active) { bg = open ? 'rgb(219,234,254)' : 'rgb(238,246,255)'; border = accent; color = accent; }
+      else { bg = open ? 'rgb(233,238,243)' : 'rgb(255,255,255)'; border = open ? 'rgb(203,213,225)' : 'rgb(213,221,232)'; color = 'rgb(69,85,108)'; }
+      const cbStyle = (on) => ({ cbBg: on ? accent : 'rgb(247,249,250)', cbBorder: on ? accent : 'rgb(132,150,176)', rowBg: on ? 'rgb(247,249,250)' : 'transparent' });
+      const rows = [];
+      tree.forEach(node => {
+        const kidVals = (node.children || []).map(k => k.value);
+        const hasKids = kidVals.length > 0;
+        const allKids = hasKids && kidVals.every(v => sel[v]);
+        const someKids = kidVals.some(v => sel[v]);
+        const selfSel = !!sel[node.value];
+        const checked = hasKids ? (selfSel && allKids) : selfSel;
+        const indeterminate = hasKids && !checked && (someKids || selfSel);
+        const on = checked || indeterminate;
+        const expanded = !!exp[node.value];
+        rows.push({
+          label: node.label, count: node.count, isChild: false,
+          indent: '12px', showArrow: nested && hasKids, showSlot: nested && !hasKids,
+          expandTransform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+          showCheck: checked, showDash: indeterminate, ...cbStyle(on),
+          onToggle: (e) => { e.stopPropagation(); this.toggleFilterNode(key, node.value, kidVals, checked); },
+          onExpand: (e) => { e.stopPropagation(); this.toggleFilterExpand(node.value); },
+        });
+        if (expanded) (node.children || []).forEach(k => {
+          const kc = !!sel[k.value];
+          rows.push({
+            label: k.label, count: k.count, isChild: true,
+            indent: '46px', showArrow: false, showSlot: false,
+            expandTransform: 'rotate(0deg)', showCheck: kc, showDash: false, ...cbStyle(kc),
+            onToggle: (e) => { e.stopPropagation(); this.toggleFilterNode(key, k.value, [], kc); },
+            onExpand: (e) => { e.stopPropagation(); },
+          });
+        });
+      });
+      return {
+        key, label, open, active, inactive: !active,
+        showBerry: berry > 0, berry: String(berry),
+        chipBg: bg, chipBorder: border, chipColor: color, chipWeight: active ? '500' : '400',
+        chevron: open ? 'rotate(180deg)' : 'rotate(0deg)',
+        menuWidth: nested ? '300px' : '260px',
+        onToggle: (e) => { e.stopPropagation(); this.openFilterMenu(key); },
+        onClear: (e) => { e.stopPropagation(); this.clearFilter(key); },
+        footerCount: selCount + ' selected', hasSelection: active, rows,
+      };
+    };
+    const itemFilters = [mkFilter('shared', 'Shared folders', sharedTree, true), mkFilter('folders', 'My folders', folderTree, false)];
+    const permFilters = [mkFilter('perm', 'Permissions', permTree, false)];
+    const anyItemFilter = sharedVals.length > 0 || folderVals.length > 0;
+
+    // ===== MY FOLDERS SCREEN =====
+    let folderList = this.folders.filter(f => !s.deletedFolders[f.name]);
+    if (isFolders && q) folderList = folderList.filter(f => f.name.toLowerCase().includes(q) || (f.desc || '').toLowerCase().includes(q));
+    folderList = folderList.slice().sort((a, b) => s.sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+    const fSelMap = s.folderSel;
+    const fAllChecked = folderList.length > 0 && folderList.every(f => fSelMap[f.name]);
+    const folderRows = folderList.map(f => ({
+      name: f.name, desc: f.desc || '', hasDesc: !!(f.desc && f.desc.length), noDesc: !(f.desc && f.desc.length), items: f.items,
+      checked: !!fSelMap[f.name], cbBg: fSelMap[f.name] ? accent : 'rgb(247,249,250)', cbBorder: fSelMap[f.name] ? accent : 'rgb(132,150,176)',
+      onCheck: (e) => { e.stopPropagation(); this.setState(st => { const m = { ...st.folderSel }; if (m[f.name]) delete m[f.name]; else m[f.name] = true; return { folderSel: m }; }); },
+      onEdit: (e) => { e.stopPropagation(); this.setState({ folderModal: { mode: 'edit', orig: f.name, name: f.name, desc: f.desc || '' } }); },
+      onDelete: (e) => { e.stopPropagation(); this.setState(st => ({ deletedFolders: { ...st.deletedFolders, [f.name]: true }, folderSel: {} })); },
+    }));
+    const fm = s.folderModal;
+
+    return {
+      isFolders, showDrawer: isItemsTable || isShared,
+      folderRows, folderEmpty: isFolders && folderList.length === 0,
+      folderSortTransform: s.sortAsc ? 'rotate(0deg)' : 'rotate(180deg)',
+      fAllChecked, folderHeaderCbBg: fAllChecked ? accent : 'rgb(247,249,250)', folderHeaderCbBorder: fAllChecked ? accent : 'rgb(132,150,176)',
+      onToggleAllFolders: () => this.setState(st => { if (fAllChecked) return { folderSel: {} }; const m = {}; folderList.forEach(f => m[f.name] = true); return { folderSel: m }; }),
+      onAddPrimary: () => { if (isFolders) this.setState({ folderModal: { mode: 'add', orig: null, name: '', desc: '' } }); },
+      folderModalOpen: !!fm, folderModalTitle: fm ? (fm.mode === 'add' ? 'Add folder' : 'Edit folder') : '',
+      folderModalName: fm ? fm.name : '', folderModalDesc: fm ? fm.desc : '',
+      folderNameEmpty: !fm || !fm.name.trim(),
+      onFolderName: (e) => { const v = e.target.value; this.setState(st => ({ folderModal: { ...st.folderModal, name: v } })); },
+      onFolderDesc: (e) => { const v = e.target.value; this.setState(st => ({ folderModal: { ...st.folderModal, desc: v } })); },
+      closeFolderModal: () => this.setState({ folderModal: null }),
+      saveFolder: () => this.setState(st => {
+        const m = st.folderModal; if (!m || !m.name.trim()) return {};
+        if (m.mode === 'add') this.folders = [...this.folders, { name: m.name.trim(), desc: m.desc.trim(), items: 0 }];
+        else this.folders = this.folders.map(f => f.name === m.orig ? { ...f, name: m.name.trim(), desc: m.desc.trim() } : f);
+        return { folderModal: null };
+      }),
+      itemFilters, permFilters,
+      navBg, accent, expanded, sidebarWidth: s.collapsed ? '76px' : '296px',
+      productMenuOpen: s.productMenuOpen,
+      onToggleProductMenu: (e) => { e.stopPropagation(); this.setState(st => ({ productMenuOpen: !st.productMenuOpen })); },
+      products, upsells, hasUpsells: upsells.length > 0,
+      menuTop: '150px', menuLeft: s.collapsed ? '12px' : '16px', menuWidth: s.collapsed ? '300px' : '264px',
+      switcherPad: s.collapsed ? '12px 0' : '8px', switcherJustify: s.collapsed ? 'center' : 'flex-start', collapsedShow: s.collapsed,
+      switcherRowBg: s.productMenuOpen ? 'rgb(13,67,175)' : 'transparent',
+      switcherPillBg: s.productMenuOpen ? 'rgb(219,234,254)' : 'transparent',
+      switcherTileBg: s.productMenuOpen ? accent : 'rgb(238,246,255)',
+      switcherLockColor: s.productMenuOpen ? 'rgb(255,255,255)' : accent,
+      switcherChevColor: s.productMenuOpen ? accent : 'rgba(255,255,255,0.7)',
+      onCollapse: () => this.setState({ collapsed: !s.collapsed }),
+      navList: nl,
+      single, breadcrumb: !single, crumbs, titleText, titleIcon, titleTile,
+      isItemsTable, isShared, showVaultCol, showSharedCol, showFolderCol,
+      customizeOpen: s.customizeOpen, customizeRows, stopProp: (e) => e.stopPropagation(),
+      onCustomize: (e) => { e.stopPropagation(); this.setState({ customizeOpen: true }); },
+      onCloseCustomize: (e) => { if (e) e.stopPropagation(); this.setState({ customizeOpen: false }); },
+      onResetCols: (e) => { e.stopPropagation(); this.setState({ cols: { vault: true, shared: true, folders: true } }); },
+      rows, empty: isItemsTable && list.length === 0,
+      collRows, emptyColl: isShared && sharedCount === 0,
+      count: isFolders ? folderRows.length : count, countLabel: isShared ? 'Shared folders' : (isFolders ? 'Folders' : 'Items'),
+      showImport: isItemsTable, showCustomize: isItemsTable, addLabel: isFolders ? 'Add folder' : 'Add',
+      searchPlaceholder: isFolders ? 'Search folders' : (isShared ? 'Search shared folders' : 'Search'),
+      allChecked, headerCbBg: allChecked ? accent : 'rgb(247,249,250)', headerCbBorder: allChecked ? accent : 'rgb(132,150,176)', onToggleAll,
+      sortTransform: s.sortAsc ? 'rotate(0deg)' : 'rotate(180deg)', onSort: () => this.setState({ sortAsc: !s.sortAsc }),
+      query: s.query, onSearch: (e) => this.setState({ query: e.target.value }),
+      onFav: () => this.setState({ favFilter: !s.favFilter }),
+      favChipBg: s.favFilter ? 'rgb(238,246,255)' : 'rgb(255,255,255)', favChipBorder: s.favFilter ? accent : 'rgb(213,221,232)', favChipColor: s.favFilter ? accent : 'rgb(69,85,108)',
+      onPinned: () => this.setState({ pinnedFilter: !s.pinnedFilter }),
+      pinnedChipBg: s.pinnedFilter ? 'rgb(238,246,255)' : 'rgb(255,255,255)', pinnedChipBorder: s.pinnedFilter ? accent : 'rgb(213,221,232)', pinnedChipColor: s.pinnedFilter ? accent : 'rgb(69,85,108)',
+      clearVisible, onClear: () => this.setState({ favFilter: false, pinnedFilter: false, typeFilter: 'all', query: '', filters: { shared: {}, folders: {}, perm: {} }, filterBerry: { shared: 0, folders: 0, perm: 0 }, openFilter: null }),
+      typeActive, typeInactive: !typeActive, typeMenuOpen, typeOptions,
+      typeLabel: 'Type: ' + selDef.label, typeChipBg, typeChipBorder, typeChipColor,
+      typeChipWeight: typeActive ? '500' : '400', typeChevron: typeMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      onToggleTypeMenu: (e) => { e.stopPropagation(); this.setState(st => { const upd = { typeMenuOpen: !st.typeMenuOpen, openMenu: null, productMenuOpen: false }; if (st.openFilter) { upd.filterBerry = this.commitBerry(st, st.openFilter); upd.openFilter = null; } return upd; }); },
+      onClearType: (e) => { e.stopPropagation(); this.setState({ typeFilter: 'all', typeMenuOpen: false }); },
+    };
+  }
+}
+</script>
+</body>
+</html>

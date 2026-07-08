@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/icons.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/tokens/base.css">
+  <link rel="stylesheet" href="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/styles.css">
+  <script src="_ds/design-system-17827cd1-df9c-4b6b-b477-ccf3b39b1350/_ds_bundle.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    p { margin: 0; }
+    a { color: #175ddc; text-decoration: none; }
+    a:hover { color: #1450c4; }
+    .bw-scroll::-webkit-scrollbar { width: 8px; }
+    .bw-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+    @keyframes berryPulse { 0% { transform: scale(1); opacity: 0.5; } 70% { opacity: 0; } 100% { transform: scale(2.8); opacity: 0; } }
+    .berry-pulse { animation: berryPulse 2.1s ease-out infinite; }
+    .berry-beacon:focus-visible { outline: 2px solid #000; outline-offset: 2px; border-radius: 50%; }
+    @keyframes berryIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes berryInUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .berry-callout { animation: berryIn 0.18s ease-out; }
+    .berry-callout-up { animation: berryInUp 0.18s ease-out; }
+    .berry-callout:focus-visible, .berry-callout-up:focus-visible { outline: none; }
+    @media (prefers-reduced-motion: reduce) { .berry-pulse { animation: none; } .berry-callout, .berry-callout-up { animation: none; } }
+  </style>
+</helmet>
+<div style="min-height:100vh;width:100%;background:#e5e7eb;display:flex;align-items:center;justify-content:center;padding:32px;font-family:'Inter',sans-serif;">
+  <div style="position:relative;width:480px;height:640px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0px 8px 32px rgba(0,0,0,0.2);display:flex;flex-direction:column;">
+
+    <!-- ===================== PERSISTENT TOP BAR ===================== -->
+    <div style="background:#162455;display:flex;align-items:center;justify-content:space-between;padding:8px 16px;flex-shrink:0;z-index:10;">
+      <img src="assets/logo-horizontal-white.svg" alt="Bitwarden" style="height:18px;display:block;"/>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:none;border:none;cursor:pointer;color:#fff;" style-hover="background:rgba(255,255,255,0.1);">
+          <i class="bwi bwi-new-window" style="font-size:16px;"></i>
+        </button>
+        <div style="width:24px;height:24px;border-radius:100px;background:#fa6216;border:1px solid #8496b0;display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:8px;font-weight:600;color:#fff;">DF</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== VAULT ===================== -->
+    <sc-if value="{{ isVault }}" hint-placeholder-val="{{ true }}">
+      <!-- Vault selector sub-header -->
+      <div style="background:#f7f9fa;border-bottom:1px solid #d5dde8;padding:12px;flex-shrink:0;z-index:10;">
+        <div style="display:flex;gap:8px;align-items:center;padding-left:4px;">
+          <div style="display:flex;flex:1 0 0;gap:4px;align-items:center;min-width:0;">
+            <div style="display:flex;gap:8px;align-items:center;">
+              <div style="width:16px;height:16px;border-radius:4px;background:#175ddc;border:1px solid #2a70f4;display:flex;align-items:center;justify-content:center;">
+                <i class="bwi bwi-list" style="font-size:9px;color:#fff;"></i>
+              </div>
+              <p style="font-size:16px;line-height:24px;font-weight:500;color:#0f172b;">{{ viewLabel }}</p>
+            </div>
+            <button onClick="{{ toggleSwitcher }}" style="width:24px;height:24px;border-radius:4px;background:rgba(7,11,24,0.05);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:rgba(7,11,24,0.1);">
+              <i class="bwi bwi-angle-down" style="font-size:12px;color:#175ddc;transition:transform 0.2s;transform:rotate({{ chevronRotate }});"></i>
+            </button>
+          </div>
+          <div style="display:flex;gap:4px;align-items:center;font-size:12px;line-height:16px;white-space:nowrap;">
+            <span style="font-weight:600;color:#0f172b;">{{ totalCount }}</span>
+            <span style="font-weight:400;color:#45556c;">items</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search + filter (slides up on scroll) -->
+      <div style="flex-shrink:0;overflow:hidden;max-height:{{ searchMaxHeight }};transition:max-height 0.3s cubic-bezier(0.4,0,0.2,1);">
+      <div style="background:#fff;display:flex;gap:8px;align-items:center;padding:12px 8px 16px 12px;z-index:10;transform:translateY({{ searchTranslate }});transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);">
+        <div style="flex:1 0 0;height:40px;min-width:0;background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;">
+          <i class="bwi bwi-search" style="font-size:14px;color:#62748e;"></i>
+          <span style="flex:1;font-size:14px;line-height:20px;color:#62748e;">Search</span>
+        </div>
+        <button onClick="{{ openFilter }}" style="position:relative;width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#f0f4f8;">
+          <i class="bwi bwi-sliders" style="font-size:18px;color:{{ filterIconColor }};"></i>
+          <sc-if value="{{ filterActive }}"><span style="position:absolute;top:2px;right:2px;width:10px;height:10px;border-radius:50%;background:#175ddc;border:1.5px solid #fff;"></span></sc-if>
+        </button>
+      </div>
+      </div>
+
+      <!-- Filter chips -->
+      <sc-if value="{{ hasChips }}">
+        <div style="background:#fff;padding:4px 12px 16px;flex-shrink:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="1">
+            <div style="background:#eef6ff;border:1px solid #bedbff;border-radius:6px;display:flex;gap:6px;align-items:center;padding:4px 4px 4px 8px;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0d43af;white-space:nowrap;">{{ chip.label }}</span>
+              <button onClick="{{ chip.onRemove }}" style="width:20px;height:20px;border-radius:4px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0d43af;" style-hover="background:rgba(190,219,255,0.5);">
+                <i class="bwi bwi-close" style="font-size:10px;"></i>
+              </button>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- List -->
+      <div class="bw-scroll" ref="{{ listRef }}" onScroll="{{ onListScroll }}" style="flex:1;overflow-y:auto;min-height:0;">
+        <div style="display:flex;flex-direction:column;align-items:center;padding:0 12px 16px;">
+          <sc-if value="{{ hasAutofill }}">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;width:100%;">
+              <div style="display:flex;gap:4px;align-items:center;padding:0 4px 4px;width:100%;">
+                <p style="flex:1;font-size:14px;line-height:20px;font-weight:600;color:#1b2029;">Autofill suggestions</p>
+                <p style="font-size:14px;line-height:20px;color:#5a6d91;">{{ autofillCount }}</p>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
+                <sc-for list="{{ autofill }}" as="item">
+                  <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;align-items:center;gap:8px;padding:8px 8px 8px 12px;">
+                    <div style="display:flex;flex:1 0 0;gap:12px;align-items:center;min-width:0;">
+                      <div style="width:24px;height:24px;border-radius:6px;flex-shrink:0;background-color:#e6ebf2;background-image:url({{ item.favicon }});background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+                      <div style="display:flex;flex:1 0 0;flex-direction:column;min-width:0;">
+                        <div style="display:flex;gap:4px;align-items:center;width:100%;">
+                          <p style="font-weight:500;font-size:14px;line-height:20px;color:#0f172b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.name }}</p>
+                          <sc-if value="{{ item.isFavorite }}"><i class="bwi bwi-star-f" style="color:#175ddc;font-size:12px;"></i></sc-if>
+                          <sc-if value="{{ item.isBusiness }}"><i class="bwi bwi-business" style="color:#62748e;font-size:12px;"></i></sc-if>
+                        </div>
+                        <p style="font-size:12px;line-height:16px;color:#45556c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;">{{ item.email }}</p>
+                      </div>
+                    </div>
+                    <div style="display:flex;align-items:center;flex-shrink:0;">
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-clone" style="font-size:15px;"></i></button>
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-external-link" style="font-size:15px;"></i></button>
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-ellipsis-v" style="font-size:15px;"></i></button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasFavorites }}">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;width:100%;">
+              <div style="display:flex;gap:4px;align-items:center;padding:20px 4px 4px;width:100%;">
+                <p style="flex:1;font-size:14px;line-height:20px;font-weight:600;color:#1b2029;">Favorites</p>
+                <p style="font-size:14px;line-height:20px;color:#5a6d91;">{{ favoritesCount }}</p>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
+                <sc-for list="{{ favorites }}" as="item">
+                  <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;align-items:center;gap:8px;padding:8px 8px 8px 12px;">
+                    <div style="display:flex;flex:1 0 0;gap:12px;align-items:center;min-width:0;">
+                      <div style="width:24px;height:24px;border-radius:6px;flex-shrink:0;background-color:#e6ebf2;background-image:url({{ item.favicon }});background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+                      <div style="display:flex;flex:1 0 0;flex-direction:column;min-width:0;">
+                        <div style="display:flex;gap:4px;align-items:center;width:100%;">
+                          <p style="font-weight:500;font-size:14px;line-height:20px;color:#0f172b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.name }}</p>
+                          <sc-if value="{{ item.isFavorite }}"><i class="bwi bwi-star-f" style="color:#175ddc;font-size:12px;"></i></sc-if>
+                          <sc-if value="{{ item.isBusiness }}"><i class="bwi bwi-business" style="color:#62748e;font-size:12px;"></i></sc-if>
+                        </div>
+                        <p style="font-size:12px;line-height:16px;color:#45556c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;">{{ item.email }}</p>
+                      </div>
+                    </div>
+                    <div style="display:flex;align-items:center;flex-shrink:0;">
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-clone" style="font-size:15px;"></i></button>
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-external-link" style="font-size:15px;"></i></button>
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-ellipsis-v" style="font-size:15px;"></i></button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasOthers }}">
+            <div style="display:flex;flex-direction:column;align-items:flex-start;width:100%;">
+              <div style="display:flex;gap:4px;align-items:center;padding:20px 4px 4px;width:100%;">
+                <p style="flex:1;font-size:14px;line-height:20px;font-weight:600;color:#1b2029;">{{ othersLabel }}</p>
+                <p style="font-size:14px;line-height:20px;color:#5a6d91;">{{ othersCount }}</p>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:6px;width:100%;">
+                <sc-for list="{{ others }}" as="item">
+                  <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;align-items:center;gap:8px;padding:8px 8px 8px 12px;">
+                    <div style="display:flex;flex:1 0 0;gap:12px;align-items:center;min-width:0;">
+                      <div style="width:24px;height:24px;border-radius:6px;flex-shrink:0;background-color:#e6ebf2;background-image:url({{ item.favicon }});background-size:cover;background-position:center;background-repeat:no-repeat;"></div>
+                      <div style="display:flex;flex:1 0 0;flex-direction:column;min-width:0;">
+                        <div style="display:flex;gap:4px;align-items:center;width:100%;">
+                          <p style="font-weight:500;font-size:14px;line-height:20px;color:#0f172b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.name }}</p>
+                          <sc-if value="{{ item.isFavorite }}"><i class="bwi bwi-star-f" style="color:#175ddc;font-size:12px;"></i></sc-if>
+                          <sc-if value="{{ item.isBusiness }}"><i class="bwi bwi-business" style="color:#62748e;font-size:12px;"></i></sc-if>
+                        </div>
+                        <p style="font-size:12px;line-height:16px;color:#45556c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%;">{{ item.email }}</p>
+                      </div>
+                    </div>
+                    <div style="display:flex;align-items:center;flex-shrink:0;">
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-clone" style="font-size:15px;"></i></button>
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-external-link" style="font-size:15px;"></i></button>
+                      <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-ellipsis-v" style="font-size:15px;"></i></button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ isEmpty }}">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 0;color:#62748e;">
+              <p style="font-size:14px;">No items found</p>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <button onClick="{{ openNewItem }}" style="position:absolute;right:24px;bottom:72px;width:48px;height:48px;border-radius:50%;background:#175ddc;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0px 1.7px 1.7px rgba(0,0,0,0.1),0px 3.4px 2.6px rgba(0,0,0,0.1);z-index:20;cursor:pointer;" style-hover="background:#1450c4;">
+        <i class="bwi bwi-plus" style="font-size:20px;color:#fff;"></i>
+      </button>
+    </sc-if>
+
+    <!-- ===================== SEND ===================== -->
+    <sc-if value="{{ isSend }}">
+      <div style="background:#f7f9fa;border-bottom:1px solid #d5dde8;padding:12px;flex-shrink:0;">
+        <p style="padding-left:4px;font-size:16px;line-height:24px;font-weight:500;color:#0f172b;">Send</p>
+      </div>
+      <div style="background:#fff;display:flex;gap:8px;align-items:center;padding:12px 8px 16px 12px;flex-shrink:0;">
+        <div style="flex:1 0 0;height:40px;min-width:0;background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;">
+          <i class="bwi bwi-search" style="font-size:14px;color:#62748e;"></i>
+          <span style="flex:1;font-size:14px;line-height:20px;color:#62748e;">Search</span>
+        </div>
+        <button style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#f0f4f8;"><i class="bwi bwi-sliders" style="font-size:18px;color:#0f172b;"></i></button>
+      </div>
+      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:0 12px 16px;">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ sends }}" as="s" hint-placeholder-count="3">
+            <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;display:flex;align-items:center;gap:8px;padding:8px 4px 8px 12px;">
+              <div style="width:24px;height:24px;border-radius:4px;background:#eef6ff;border:1px solid #bedbff;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi bwi-file-text" style="font-size:13px;color:#175ddc;"></i></div>
+              <p style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.name }}</p>
+              <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-clone" style="font-size:15px;"></i></button>
+              <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#c10007;" style-hover="background:#fef2f2;"><i class="bwi bwi-trash" style="font-size:15px;"></i></button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== GENERATOR ===================== -->
+    <sc-if value="{{ isGenerator }}">
+      <div style="background:#f7f9fa;border-bottom:1px solid #d5dde8;padding:12px;flex-shrink:0;">
+        <p style="padding-left:4px;font-size:16px;line-height:24px;font-weight:500;color:#0f172b;">Generator</p>
+      </div>
+      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:12px;display:flex;flex-direction:column;gap:16px;">
+        <!-- toggle group -->
+        <div style="background:#fff;border:1px solid #8496b0;border-radius:16px;display:flex;gap:2px;align-items:center;padding:4px;">
+          <sc-for list="{{ genTabs }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.onClick }}" style="flex:1 0 0;min-width:0;border-radius:12px;border:none;cursor:pointer;padding:8px 16px;display:flex;align-items:center;justify-content:center;background:{{ t.bg }};">
+              <span style="font-size:14px;line-height:20px;font-weight:{{ t.weight }};color:{{ t.color }};white-space:nowrap;">{{ t.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <!-- generated value -->
+        <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;padding:12px 4px 12px 16px;display:flex;align-items:center;gap:8px;">
+          <p style="flex:1;min-width:0;font-family:var(--font-mono,monospace);font-size:16px;line-height:24px;word-break:break-all;">
+            <sc-for list="{{ passwordChars }}" as="c" hint-placeholder-count="20"><span style="color:{{ c.color }};">{{ c.ch }}</span></sc-for>
+          </p>
+          <button onClick="{{ regenerate }}" style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;flex-shrink:0;" style-hover="background:#f0f4f8;"><i class="bwi bwi-generate" style="font-size:16px;"></i></button>
+          <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;flex-shrink:0;" style-hover="background:#f0f4f8;"><i class="bwi bwi-clone" style="font-size:16px;"></i></button>
+        </div>
+        <!-- options card -->
+        <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:2px;align-items:center;font-size:14px;line-height:20px;font-weight:500;"><span style="color:#0f172b;">Length</span><span style="color:#c10007;">*</span></div>
+            <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;">
+              <span style="flex:1;font-size:14px;line-height:20px;color:#0f172b;">{{ genLength }}</span>
+              <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;"><i class="bwi bwi-angle-up-down" style="font-size:16px;"></i></button>
+            </div>
+            <p style="font-size:12px;line-height:16px;color:#45556c;">Value must be between 5 and 128. Use 14 characters or more to generate a strong password.</p>
+          </div>
+          <sc-for list="{{ genSwitches }}" as="sw" hint-placeholder-count="5">
+            <button onClick="{{ sw.onToggle }}" style="display:flex;gap:8px;align-items:center;background:none;border:none;cursor:pointer;padding:0;width:100%;text-align:left;">
+              <div style="width:40px;height:24px;border-radius:9999px;flex-shrink:0;display:flex;align-items:center;padding:3px;transition:background 0.15s;justify-content:{{ sw.justify }};background:{{ sw.trackBg }};">
+                <div style="width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0px 1px 2px rgba(29,41,61,0.2);display:flex;align-items:center;justify-content:center;">
+                  <sc-if value="{{ sw.on }}"><i class="bwi bwi-check" style="font-size:10px;color:#175ddc;"></i></sc-if>
+                </div>
+              </div>
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ sw.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== SETTINGS ===================== -->
+    <sc-if value="{{ isSettings }}">
+      <div style="background:#f7f9fa;border-bottom:1px solid #d5dde8;padding:12px;flex-shrink:0;">
+        <p style="padding-left:4px;font-size:16px;line-height:24px;font-weight:500;color:#0f172b;">Settings</p>
+      </div>
+      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:12px;display:flex;flex-direction:column;gap:6px;">
+        <sc-for list="{{ settingsItems }}" as="row" hint-placeholder-count="8">
+          <button style="background:#fff;border:1px solid #d5dde8;border-radius:8px;display:flex;align-items:center;gap:12px;padding:8px 12px;width:100%;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+            <div style="width:24px;height:24px;border-radius:6px;background:#eef6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ row.icon }}" style="font-size:13px;color:#175ddc;"></i></div>
+            <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ row.label }}</span>
+            <i class="bwi bwi-angle-right" style="font-size:15px;color:#62748e;"></i>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ===================== ADD NEW LOGIN ===================== -->
+    <sc-if value="{{ isAddLogin }}">
+      <!-- Page header -->
+      <div style="background:#f7f9fa;border-top:1px solid #d5dde8;border-bottom:1px solid #d5dde8;display:flex;gap:4px;align-items:center;padding:12px 8px;flex-shrink:0;">
+        <button onClick="{{ backFromForm }}" style="width:24px;height:24px;border-radius:6px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#101828;" style-hover="background:rgba(7,11,24,0.06);"><i class="bwi bwi-angle-left" style="font-size:15px;"></i></button>
+        <span style="font-size:16px;line-height:24px;font-weight:500;color:#0f172b;">Add new login</span>
+      </div>
+      <!-- Content -->
+      <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:8px 12px 16px;display:flex;flex-direction:column;gap:16px;">
+
+        <!-- Item details -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="font-size:14px;line-height:20px;font-weight:600;color:#45556c;">Item details</span>
+          <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:2px;font-size:14px;line-height:20px;font-weight:500;"><span style="color:#0f172b;">Item name</span><span style="color:#c10007;">*</span></div>
+              <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;padding:0 12px;"><span style="flex:1;font-size:14px;color:#0f172b;">Netflix</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;position:relative;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Vault</span>
+              <button onClick="{{ toggleFormVault }}" style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;cursor:pointer;width:100%;text-align:left;">
+                <div style="width:20px;height:20px;border-radius:4px;background:{{ formVaultTileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ formVaultIcon }}" style="font-size:11px;color:#fff;"></i></div>
+                <span style="flex:1;font-size:14px;color:#0f172b;">{{ formVaultLabel }}</span>
+                <i class="bwi bwi-angle-down" style="font-size:16px;color:#0f172b;padding-right:8px;"></i>
+              </button>
+              <sc-if value="{{ showFormVault }}">
+                <div style="position:fixed;inset:0;z-index:45;" onClick="{{ closeFormVault }}"></div>
+                <div style="position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:50;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 4px 20px rgba(29,41,61,0.15);overflow:hidden;">
+                  <sc-for list="{{ formVaultOptions }}" as="opt" hint-placeholder-count="2">
+                    <button onClick="{{ opt.onClick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;background:none;border:none;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                      <div style="width:20px;height:20px;border-radius:4px;background:{{ opt.tileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ opt.icon }}" style="font-size:11px;color:#fff;"></i></div>
+                      <span style="flex:1;font-size:14px;line-height:20px;color:#0f172b;">{{ opt.label }}</span>
+                      <sc-if value="{{ opt.active }}"><i class="bwi bwi-check" style="font-size:14px;color:#175ddc;"></i></sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <!-- Shared folders (enterprise vault permissions) -->
+            <sc-if value="{{ formIsAcme }}">
+            <div style="display:flex;flex-direction:column;gap:4px;position:relative;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Shared folders</span>
+              <button onClick="{{ toggleFormShared }}" style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:8px;padding:6px 4px 6px 12px;cursor:pointer;width:100%;text-align:left;">
+                <span style="flex:1;font-size:14px;color:{{ formSharedColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ formSharedLabel }}</span>
+                <i class="bwi bwi-angle-down" style="font-size:16px;color:#0f172b;padding-right:8px;flex-shrink:0;"></i>
+              </button>
+              <sc-if value="{{ showFormShared }}">
+                <div style="position:fixed;inset:0;z-index:45;" onClick="{{ closeFormShared }}"></div>
+                <div class="bw-scroll" style="position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:50;max-height:220px;overflow-y:auto;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 4px 20px rgba(29,41,61,0.15);">
+                  <sc-for list="{{ formSharedOptions }}" as="opt" hint-placeholder-count="5">
+                    <button onClick="{{ opt.onClick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;background:none;border:none;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                      <span style="width:18px;height:18px;border-radius:4px;flex-shrink:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:{{ opt.boxBg }};border:{{ opt.boxBorder }};"><sc-if value="{{ opt.selected }}"><i class="bwi bwi-check" style="font-size:11px;color:#fff;"></i></sc-if></span>
+                      <i class="bwi bwi-collection-shared" style="font-size:15px;color:#62748e;flex-shrink:0;"></i>
+                      <span style="flex:1;font-size:14px;line-height:20px;color:#0f172b;">{{ opt.name }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
+            <!-- My folders (personal organization) -->
+            <div style="display:flex;flex-direction:column;gap:4px;position:relative;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">My folders</span>
+              <button onClick="{{ toggleFormFolder }}" style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:8px;padding:0 4px 0 12px;cursor:pointer;width:100%;text-align:left;">
+                <span style="flex:1;font-size:14px;color:{{ formFolderColor }};">{{ formFolderLabel }}</span>
+                <i class="bwi bwi-angle-down" style="font-size:16px;color:#0f172b;padding-right:8px;"></i>
+              </button>
+              <sc-if value="{{ showFormFolder }}">
+                <div style="position:fixed;inset:0;z-index:45;" onClick="{{ closeFormFolder }}"></div>
+                <div class="bw-scroll" style="position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:50;max-height:220px;overflow-y:auto;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 4px 20px rgba(29,41,61,0.15);">
+                  <sc-for list="{{ formFolderOptions }}" as="opt" hint-placeholder-count="5">
+                    <button onClick="{{ opt.onClick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;background:none;border:none;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                      <i class="bwi bwi-folder" style="font-size:14px;color:#62748e;flex-shrink:0;"></i>
+                      <span style="flex:1;font-size:14px;line-height:20px;color:#0f172b;">{{ opt.label }}</span>
+                      <sc-if value="{{ opt.active }}"><i class="bwi bwi-check" style="font-size:14px;color:#175ddc;"></i></sc-if>
+                    </button>
+                  </sc-for>
+                  <button onClick="{{ openNewFolder }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;background:none;border:none;border-top:1px solid #e6ebf2;cursor:pointer;text-align:left;color:#175ddc;" style-hover="background:#f7f9fa;">
+                    <i class="bwi bwi-plus" style="font-size:14px;flex-shrink:0;"></i>
+                    <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;">Create new folder</span>
+                  </button>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+
+        <!-- Login credentials -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="font-size:14px;line-height:20px;font-weight:600;color:#45556c;">Login credentials</span>
+          <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Username</span>
+              <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:4px;padding:0 4px 0 12px;">
+                <span style="flex:1;font-size:14px;color:#0f172b;">alexolson@acme.com</span>
+                <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-generate" style="font-size:15px;"></i></button>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Password</span>
+              <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:4px;padding:0 4px 0 12px;">
+                <span style="flex:1;font-size:16px;letter-spacing:1px;color:#0f172b;">••••••••••••</span>
+                <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-generate" style="font-size:15px;"></i></button>
+                <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-eye" style="font-size:15px;"></i></button>
+              </div>
+              <span style="font-size:12px;line-height:16px;color:#45556c;">Use the generator to create a strong unique password.</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="display:flex;gap:6px;align-items:center;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Authenticator key</span><i class="bwi bwi-question-circle" style="font-size:13px;color:#175ddc;"></i></div>
+              <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:4px;padding:0 4px 0 12px;">
+                <span style="flex:1;"></span>
+                <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-eye" style="font-size:15px;"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Autofill options -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="font-size:14px;line-height:20px;font-weight:600;color:#45556c;">Autofill options</span>
+          <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Website (URI)</span>
+              <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:40px;display:flex;align-items:center;gap:4px;padding:0 4px 0 12px;">
+                <span style="flex:1;font-size:14px;color:#0f172b;">https://netflix.com</span>
+                <button style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-cog" style="font-size:15px;"></i></button>
+              </div>
+            </div>
+            <button style="display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;color:#175ddc;align-self:flex-start;"><i class="bwi bwi-plus" style="font-size:14px;"></i><span style="font-size:14px;line-height:20px;font-weight:500;">Add website</span></button>
+          </div>
+        </div>
+
+        <!-- Additional options -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <span style="font-size:14px;line-height:20px;font-weight:600;color:#45556c;">Additional options</span>
+          <div style="background:#fff;border:1px solid #d5dde8;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:16px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Notes</span>
+              <div style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:80px;display:flex;align-items:flex-start;padding:10px 12px;"><span style="flex:1;font-size:14px;color:#62748e;">Add notes</span></div>
+            </div>
+            <button style="display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;padding:0;align-self:flex-start;">
+              <span style="width:18px;height:18px;border-radius:4px;border:1px solid #8496b0;background:#f7f9fa;flex-shrink:0;box-sizing:border-box;"></span>
+              <span style="font-size:14px;line-height:20px;color:#0f172b;">Master password reprompt</span>
+            </button>
+            <button style="display:flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;color:#175ddc;align-self:flex-start;"><i class="bwi bwi-plus" style="font-size:14px;"></i><span style="font-size:14px;line-height:20px;font-weight:500;">Add field</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="background:#fff;border-top:1px solid #e6ebf2;box-shadow:0px -1px 14px rgba(29,41,61,0.1);display:flex;gap:12px;align-items:center;padding:16px;flex-shrink:0;">
+        <div style="display:flex;gap:4px;align-items:center;flex-shrink:0;">
+          <button style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#c10007;" style-hover="background:#fef2f2;"><i class="bwi bwi-trash" style="font-size:17px;"></i></button>
+          <button style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#101828;" style-hover="background:#f0f4f8;"><i class="bwi bwi-star" style="font-size:17px;"></i></button>
+        </div>
+        <div style="flex:1;display:flex;gap:8px;justify-content:flex-end;align-items:center;">
+          <button onClick="{{ backFromForm }}" style="height:40px;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;background:#175ddc;display:flex;align-items:center;justify-content:center;" style-hover="background:#1450c4;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Save</span></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== BOTTOM NAV ===================== -->
+    <sc-if value="{{ showBottomNav }}">
+    <div style="background:#fff;border-top:1px solid #e6ebf2;box-shadow:0px -1px 7px rgba(29,41,61,0.1);display:flex;gap:4px;align-items:flex-end;justify-content:center;padding:4px;flex-shrink:0;z-index:10;">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.onClick }}" style="flex:1 0 0;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 12px;background:none;border:none;cursor:pointer;">
+          <i class="bwi {{ n.icon }}" style="font-size:20px;color:{{ n.color }};"></i>
+          <span style="font-size:12px;line-height:16px;color:{{ n.color }};font-weight:{{ n.weight }};">{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <!-- ===================== VAULT SWITCHER DROPDOWN ===================== -->
+    <sc-if value="{{ showSwitcher }}">
+      <div style="position:absolute;inset:0;z-index:20;" onClick="{{ closeSwitcher }}"></div>
+      <div style="position:absolute;left:12px;top:{{ switcherTop }}px;z-index:30;width:220px;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 4px 20px rgba(29,41,61,0.15);overflow:hidden;">
+        <sc-for list="{{ viewOptions }}" as="opt" hint-placeholder-count="3">
+          <button onClick="{{ opt.onClick }}" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 16px;background:none;border:none;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+            <div style="width:16px;height:16px;border-radius:4px;background:{{ opt.tileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ opt.icon }}" style="font-size:9px;color:#fff;"></i></div>
+            <span style="flex:1;font-size:14px;line-height:20px;color:{{ opt.color }};font-weight:{{ opt.weight }};">{{ opt.label }}</span>
+            <sc-if value="{{ opt.active }}"><i class="bwi bwi-check" style="font-size:14px;color:#175ddc;"></i></sc-if>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ===================== FILTER SHEET ===================== -->
+    <sc-if value="{{ showFilter }}">
+      <div style="position:absolute;inset:0;background:rgba(7,11,24,0.3);z-index:30;" onClick="{{ closeFilter }}"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border:1px solid #d5dde8;border-radius:16px 16px 0 0;z-index:40;box-shadow:0px -1px 14px rgba(29,41,61,0.1);">
+
+        <sc-if value="{{ stepMain }}">
+          <div style="display:flex;gap:8px;align-items:center;padding:24px 24px 8px;">
+            <p style="flex:1;font-size:24px;line-height:32px;font-weight:600;color:#0f172b;">Filter</p>
+            <button onClick="{{ closeFilter }}" style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;flex-shrink:0;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:20px;"></i></button>
+          </div>
+          <div style="padding:8px 24px;display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ filterRows }}" as="row" hint-placeholder-count="4">
+              <button onClick="{{ row.onClick }}" style="background:#fff;border:1px solid #d5dde8;border-radius:12px;width:100%;display:flex;align-items:center;gap:12px;padding:14px 12px 14px 16px;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                <sc-if value="{{ row.hasValue }}"><span style="width:8px;height:8px;border-radius:50%;background:#175ddc;flex-shrink:0;"></span></sc-if>
+                <i class="bwi {{ row.icon }}" style="font-size:16px;color:#0f172b;width:18px;text-align:center;flex-shrink:0;"></i>
+                <span style="flex:1;min-width:0;font-size:16px;line-height:22px;font-weight:500;color:#0f172b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ row.name }}<sc-if value="{{ row.hasValue }}"><span style="color:#175ddc;">: {{ row.valueText }}</span></sc-if></span>
+                <sc-if value="{{ row.hasBadge }}"><span style="background:#175ddc;color:#fff;font-size:9px;font-weight:600;min-width:18px;padding:2px 6px;border-radius:9999px;text-align:center;flex-shrink:0;">{{ row.badge }}</span></sc-if>
+                <i class="bwi bwi-angle-right" style="font-size:15px;color:#62748e;flex-shrink:0;"></i>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:16px 24px 24px;">
+            <span style="flex:1;font-size:14px;color:#45556c;">{{ selectedLabel }}</span>
+            <button onClick="{{ clearAllFilters }}" style="height:40px;border:1px solid #8496b0;border-radius:12px;padding:10px 16px;cursor:pointer;background:#fff;display:flex;align-items:center;gap:8px;justify-content:center;" style-hover="background:#f0f4f8;"><i class="bwi bwi-error" style="font-size:15px;color:#0f172b;"></i><span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Clear all</span></button>
+            <button onClick="{{ applyMain }}" style="background:#175ddc;height:40px;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#1450c4;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Done</span></button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stepType }}">
+          <div style="display:flex;gap:4px;align-items:center;padding:12px 16px;border-top:1px solid #e6ebf2;">
+            <button onClick="{{ backToMain }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-angle-left" style="font-size:18px;"></i></button>
+            <p style="flex:1;font-size:20px;line-height:28px;font-weight:500;color:#0f172b;">Type</p>
+            <button onClick="{{ closeFilter }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:18px;"></i></button>
+          </div>
+          <div style="padding:8px 24px;display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ typeOptions }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ t.onClick }}" style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;gap:12px;align-items:center;padding:10px 12px 10px 16px;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                <span style="width:16px;height:16px;border-radius:50%;flex-shrink:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:#f7f9fa;border:{{ t.ringBorder }};">
+                  <sc-if value="{{ t.selected }}"><span style="width:8px;height:8px;border-radius:50%;background:#175ddc;"></span></sc-if>
+                </span>
+                <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:flex-end;padding:24px;">
+            <button onClick="{{ backToMain }}" style="background:#175ddc;height:40px;border:none;border-radius:12px;padding:10px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#1450c4;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Done</span></button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stepVault }}">
+          <div style="display:flex;gap:4px;align-items:center;padding:12px 16px;border-top:1px solid #e6ebf2;">
+            <button onClick="{{ backToMain }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-angle-left" style="font-size:18px;"></i></button>
+            <p style="flex:1;font-size:20px;line-height:28px;font-weight:500;color:#0f172b;">Vault</p>
+            <button onClick="{{ closeFilter }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:18px;"></i></button>
+          </div>
+          <div style="padding:8px 24px;display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ vaultFilterOptions }}" as="v" hint-placeholder-count="2">
+              <button onClick="{{ v.onClick }}" style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;gap:12px;align-items:center;padding:10px 12px 10px 16px;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                <span style="width:18px;height:18px;border-radius:4px;flex-shrink:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:{{ v.boxBg }};border:{{ v.boxBorder }};"><sc-if value="{{ v.selected }}"><i class="bwi bwi-check" style="font-size:11px;color:#fff;"></i></sc-if></span>
+                <div style="width:20px;height:20px;border-radius:4px;background:{{ v.tileBg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ v.icon }}" style="font-size:11px;color:#fff;"></i></div>
+                <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ v.name }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:flex-end;padding:24px;">
+            <button onClick="{{ backToMain }}" style="background:#175ddc;height:40px;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#1450c4;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Done</span></button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stepShared }}">
+          <div style="display:flex;gap:4px;align-items:center;padding:12px 16px;border-top:1px solid #e6ebf2;">
+            <button onClick="{{ backToMain }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-angle-left" style="font-size:18px;"></i></button>
+            <p style="flex:1;font-size:20px;line-height:28px;font-weight:500;color:#0f172b;">Shared folders</p>
+            <button onClick="{{ closeFilter }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:18px;"></i></button>
+          </div>
+          <div style="padding:8px 24px;display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ sharedOptions }}" as="f" hint-placeholder-count="5">
+              <button onClick="{{ f.onClick }}" style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;gap:12px;align-items:center;padding:10px 12px 10px 16px;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                <span style="width:18px;height:18px;border-radius:4px;flex-shrink:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:{{ f.boxBg }};border:{{ f.boxBorder }};"><sc-if value="{{ f.selected }}"><i class="bwi bwi-check" style="font-size:11px;color:#fff;"></i></sc-if></span>
+                <i class="bwi bwi-collection-shared" style="font-size:15px;color:#62748e;flex-shrink:0;"></i>
+                <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ f.name }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:flex-end;padding:24px;">
+            <button onClick="{{ backToMain }}" style="background:#175ddc;height:40px;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#1450c4;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Done</span></button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ stepFolders }}">
+          <div style="display:flex;gap:4px;align-items:center;padding:12px 16px;border-top:1px solid #e6ebf2;">
+            <button onClick="{{ backToMain }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-angle-left" style="font-size:18px;"></i></button>
+            <p style="flex:1;font-size:20px;line-height:28px;font-weight:500;color:#0f172b;">My folders</p>
+            <button onClick="{{ closeFilter }}" style="width:40px;height:40px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:18px;"></i></button>
+          </div>
+          <div style="padding:8px 24px;display:flex;flex-direction:column;gap:8px;">
+            <sc-for list="{{ folderOptions }}" as="f" hint-placeholder-count="5">
+              <button onClick="{{ f.onClick }}" style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;gap:12px;align-items:center;padding:10px 12px 10px 16px;cursor:pointer;text-align:left;" style-hover="background:#f7f9fa;">
+                <span style="width:18px;height:18px;border-radius:4px;flex-shrink:0;box-sizing:border-box;display:flex;align-items:center;justify-content:center;background:{{ f.boxBg }};border:{{ f.boxBorder }};">
+                  <sc-if value="{{ f.selected }}"><i class="bwi bwi-check" style="font-size:11px;color:#fff;"></i></sc-if>
+                </span>
+                <span style="flex:1;font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ f.name }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex;justify-content:flex-end;padding:24px;">
+            <button onClick="{{ backToMain }}" style="background:#175ddc;height:40px;border:none;border-radius:12px;padding:10px 20px;cursor:pointer;display:flex;align-items:center;justify-content:center;" style-hover="background:#1450c4;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Done</span></button>
+          </div>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+    <!-- ===================== NEW ITEM SHEET ===================== -->
+    <sc-if value="{{ showNewItem }}">
+      <div style="position:absolute;inset:0;background:rgba(7,11,24,0.3);z-index:30;" onClick="{{ closeNewItem }}"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;height:500px;background:#fff;border:1px solid #d5dde8;border-radius:16px 16px 0 0;z-index:40;box-shadow:0px -1px 14px rgba(29,41,61,0.1);display:flex;flex-direction:column;">
+        <div style="display:flex;gap:8px;align-items:center;padding:24px 24px 12px;flex-shrink:0;">
+          <p style="flex:1;font-size:24px;line-height:32px;font-weight:600;color:#0f172b;">Choose item to add</p>
+          <button onClick="{{ closeNewItem }}" style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;flex-shrink:0;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:20px;"></i></button>
+        </div>
+        <div class="bw-scroll" style="flex:1;overflow-y:auto;min-height:0;padding:4px 24px 24px;display:flex;flex-direction:column;gap:6px;">
+          <sc-for list="{{ newItemTypes }}" as="opt" hint-placeholder-count="9">
+            <button onClick="{{ opt.onClick }}" style="background:#fff;border:1px solid #d5dde8;border-radius:8px;width:100%;display:flex;align-items:center;gap:12px;padding:8px 8px 8px 12px;cursor:pointer;text-align:left;flex-shrink:0;" style-hover="background:#f7f9fa;">
+              <div style="width:24px;height:24px;border-radius:6px;background:#eef6ff;border:1px solid #dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bwi {{ opt.icon }}" style="font-size:13px;color:#175ddc;"></i></div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+                <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">{{ opt.label }}</span>
+                <span style="font-size:12px;line-height:16px;font-weight:400;color:#62748e;">{{ opt.sub }}</span>
+              </div>
+              <i class="bwi bwi-angle-right" style="font-size:15px;color:#62748e;flex-shrink:0;"></i>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== NEW FOLDER SHEET ===================== -->
+    <sc-if value="{{ showNewFolder }}">
+      <div style="position:absolute;inset:0;background:rgba(7,11,24,0.3);z-index:60;" onClick="{{ closeNewFolder }}"></div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border:1px solid #d5dde8;border-radius:16px 16px 0 0;z-index:70;box-shadow:0px -1px 14px rgba(29,41,61,0.1);display:flex;flex-direction:column;">
+        <div style="display:flex;gap:8px;align-items:center;padding:24px 24px 12px;flex-shrink:0;">
+          <p style="flex:1;font-size:24px;line-height:32px;font-weight:600;color:#0f172b;">Add folder</p>
+          <button onClick="{{ closeNewFolder }}" style="width:32px;height:32px;border-radius:12px;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#0f172b;flex-shrink:0;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:20px;"></i></button>
+        </div>
+        <div style="padding:4px 24px 8px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;gap:2px;font-size:14px;line-height:20px;font-weight:500;"><span style="color:#0f172b;">Name</span><span style="color:#c10007;">*</span></div>
+            <input value="{{ newFolderName }}" onInput="{{ setNewFolderName }}" placeholder="e.g. Travel" style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;height:40px;padding:0 12px;font-size:14px;color:#0f172b;font-family:inherit;outline:none;" />
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;">
+            <span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Description</span>
+            <textarea value="{{ newFolderDesc }}" onInput="{{ setNewFolderDesc }}" placeholder="Add a short description" style="background:#f7f9fa;border:1px solid #8496b0;border-radius:12px;min-height:80px;padding:10px 12px;font-size:14px;color:#0f172b;font-family:inherit;resize:none;outline:none;line-height:20px;"></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:12px 24px 24px;">
+          <button onClick="{{ closeNewFolder }}" style="height:40px;border:1px solid #8496b0;border-radius:12px;padding:10px 20px;cursor:pointer;background:#fff;" style-hover="background:#f0f4f8;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#0f172b;">Cancel</span></button>
+          <button onClick="{{ saveNewFolder }}" style="height:40px;border:none;border-radius:12px;padding:10px 20px;cursor:{{ newFolderCursor }};background:{{ newFolderSaveBg }};display:flex;align-items:center;justify-content:center;"><span style="font-size:14px;line-height:20px;font-weight:500;color:#fff;">Save</span></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== BERRY BEACONS (feature highlights) ===================== -->
+    <sc-if value="{{ anyBeaconVisible }}">
+      <div aria-live="polite" style="position:absolute;inset:0;z-index:55;pointer-events:none;">
+
+        <!-- 1. Vault switcher -->
+        <sc-if value="{{ bSwitcher.visible }}">
+          <button onClick="{{ bSwitcher.toggle }}" class="berry-beacon" aria-haspopup="dialog" aria-expanded="{{ bSwitcher.open }}" aria-label="{{ bSwitcher.ariaLabel }}" style="pointer-events:auto;position:absolute;left:132px;top:44px;width:20px;height:20px;border:none;padding:0;background:transparent;cursor:pointer;">
+            <span style="position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:{{ bSwitcher.color }};box-shadow:0 0 0 2px rgba(255,255,255,0.95);"></span>
+            <sc-if value="{{ bSwitcher.pulse }}"><span class="berry-pulse" style="position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:{{ bSwitcher.color }};"></span></sc-if>
+          </button>
+          <sc-if value="{{ bSwitcher.open }}">
+            <div class="berry-callout" ref="{{ calloutRef }}" tabindex="-1" role="dialog" aria-labelledby="berry-switcher-title" aria-describedby="berry-switcher-desc" onKeyDown="{{ bSwitcher.onKey }}" style="pointer-events:auto;position:absolute;top:70px;left:12px;width:252px;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 8px 24px rgba(29,41,61,0.18);padding:16px;outline:none;">
+              <span style="position:absolute;top:-7px;left:112px;width:12px;height:12px;background:#fff;border-left:1px solid #d5dde8;border-top:1px solid #d5dde8;transform:rotate(45deg);"></span>
+              <div style="display:flex;align-items:flex-start;gap:8px;">
+                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <p id="berry-switcher-title" style="font-size:15px;line-height:20px;font-weight:600;color:#0f172b;">{{ bSwitcher.title }}</p>
+                </div>
+                <button onClick="{{ bSwitcher.dismiss }}" aria-label="Dismiss highlight" style="pointer-events:auto;flex-shrink:0;width:24px;height:24px;margin:-4px -4px 0 0;border:none;border-radius:8px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#62748e;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:13px;"></i></button>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:6px;margin-top:10px;">
+                <i class="bwi bwi-check-circle" aria-hidden="true" style="font-size:13px;line-height:16px;color:{{ bSwitcher.color }};flex-shrink:0;margin-top:1px;"></i>
+                <p style="font-size:12px;line-height:16px;font-weight:500;color:#0f172b;">{{ bSwitcher.benefit }}</p>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- 2. Search + filter -->
+        <sc-if value="{{ bFilter.visible }}">
+          <button onClick="{{ bFilter.toggle }}" class="berry-beacon" aria-haspopup="dialog" aria-expanded="{{ bFilter.open }}" aria-label="{{ bFilter.ariaLabel }}" style="pointer-events:auto;position:absolute;left:456px;top:86px;width:20px;height:20px;border:none;padding:0;background:transparent;cursor:pointer;">
+            <span style="position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:{{ bFilter.color }};box-shadow:0 0 0 2px rgba(255,255,255,0.95);"></span>
+            <sc-if value="{{ bFilter.pulse }}"><span class="berry-pulse" style="position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:{{ bFilter.color }};"></span></sc-if>
+          </button>
+          <sc-if value="{{ bFilter.open }}">
+            <div class="berry-callout" ref="{{ calloutRef }}" tabindex="-1" role="dialog" aria-labelledby="berry-filter-title" aria-describedby="berry-filter-desc" onKeyDown="{{ bFilter.onKey }}" style="pointer-events:auto;position:absolute;top:112px;right:8px;width:252px;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 8px 24px rgba(29,41,61,0.18);padding:16px;outline:none;">
+              <span style="position:absolute;top:-7px;right:20px;width:12px;height:12px;background:#fff;border-left:1px solid #d5dde8;border-top:1px solid #d5dde8;transform:rotate(45deg);"></span>
+              <div style="display:flex;align-items:flex-start;gap:8px;">
+                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <p id="berry-filter-title" style="font-size:15px;line-height:20px;font-weight:600;color:#0f172b;">{{ bFilter.title }}</p>
+                </div>
+                <button onClick="{{ bFilter.dismiss }}" aria-label="Dismiss highlight" style="pointer-events:auto;flex-shrink:0;width:24px;height:24px;margin:-4px -4px 0 0;border:none;border-radius:8px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#62748e;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:13px;"></i></button>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:6px;margin-top:10px;">
+                <i class="bwi bwi-check-circle" aria-hidden="true" style="font-size:13px;line-height:16px;color:{{ bFilter.color }};flex-shrink:0;margin-top:1px;"></i>
+                <p style="font-size:12px;line-height:16px;font-weight:500;color:#0f172b;">{{ bFilter.benefit }}</p>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+        <!-- 3. Create item (FAB) -->
+        <sc-if value="{{ bCreate.visible }}">
+          <button onClick="{{ bCreate.toggle }}" class="berry-beacon" aria-haspopup="dialog" aria-expanded="{{ bCreate.open }}" aria-label="{{ bCreate.ariaLabel }}" style="pointer-events:auto;position:absolute;left:442px;top:512px;width:20px;height:20px;border:none;padding:0;background:transparent;cursor:pointer;">
+            <span style="position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:{{ bCreate.color }};box-shadow:0 0 0 2px rgba(255,255,255,0.95);"></span>
+            <sc-if value="{{ bCreate.pulse }}"><span class="berry-pulse" style="position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:{{ bCreate.color }};"></span></sc-if>
+          </button>
+          <sc-if value="{{ bCreate.open }}">
+            <div class="berry-callout-up" ref="{{ calloutRef }}" tabindex="-1" role="dialog" aria-labelledby="berry-create-title" aria-describedby="berry-create-desc" onKeyDown="{{ bCreate.onKey }}" style="pointer-events:auto;position:absolute;bottom:134px;right:16px;width:252px;background:#fff;border:1px solid #d5dde8;border-radius:12px;box-shadow:0px 8px 24px rgba(29,41,61,0.18);padding:16px;outline:none;">
+              <span style="position:absolute;bottom:-7px;right:24px;width:12px;height:12px;background:#fff;border-right:1px solid #d5dde8;border-bottom:1px solid #d5dde8;transform:rotate(45deg);"></span>
+              <div style="display:flex;align-items:flex-start;gap:8px;">
+                <div style="flex:1;min-width:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                  <p id="berry-create-title" style="font-size:15px;line-height:20px;font-weight:600;color:#0f172b;">{{ bCreate.title }}</p>
+                </div>
+                <button onClick="{{ bCreate.dismiss }}" aria-label="Dismiss highlight" style="pointer-events:auto;flex-shrink:0;width:24px;height:24px;margin:-4px -4px 0 0;border:none;border-radius:8px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#62748e;" style-hover="background:#f0f4f8;"><i class="bwi bwi-close" style="font-size:13px;"></i></button>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:6px;margin-top:10px;">
+                <i class="bwi bwi-check-circle" aria-hidden="true" style="font-size:13px;line-height:16px;color:{{ bCreate.color }};flex-shrink:0;margin-top:1px;"></i>
+                <p style="font-size:12px;line-height:16px;font-weight:500;color:#0f172b;">{{ bCreate.benefit }}</p>
+              </div>
+            </div>
+          </sc-if>
+        </sc-if>
+
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:544,&quot;height&quot;:704},&quot;beaconsEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Feature highlights&quot;,&quot;label&quot;:&quot;Show beacons&quot;},&quot;beaconColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#ff4026&quot;,&quot;options&quot;:[&quot;#e60076&quot;,&quot;#8200db&quot;,&quot;#ff4026&quot;,&quot;#175ddc&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Feature highlights&quot;,&quot;label&quot;:&quot;Beacon color&quot;},&quot;featureVersion&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2024.10&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Feature highlights&quot;,&quot;label&quot;:&quot;Highlights version&quot;}}">
+class Component extends DCLogic {
+  ITEMS = [
+    { id:"1", name:"Linkedin", email:"name@email.com", favicon:"assets/linkedin.png", isFavorite:true, isBusiness:true, isAutofill:true, folder:"Social media" },
+    { id:"2", name:"Linkedin", email:"name@email.com", favicon:"assets/linkedin.png", isFavorite:true, isBusiness:true, isAutofill:true, folder:"Social media" },
+    { id:"3", name:"Amazon", email:"name@email.com", favicon:"assets/amazon.png", isFavorite:true, isBusiness:true, folder:"Shopping" },
+    { id:"4", name:"Amazon", email:"name@email.com", favicon:"assets/amazon.png", isFavorite:true, isBusiness:false, folder:"Shopping" },
+    { id:"5", name:"Github", email:"name@email.com", favicon:"assets/github.png", isFavorite:true, isBusiness:true, folder:"Work" },
+    { id:"6", name:"Shire Corp. mail", email:"name@shirecorp.com", favicon:"assets/shiremail.png", isFavorite:true, isBusiness:true, folder:"Work" },
+    { id:"7", name:"My Netflix", email:"name@email.com", favicon:"assets/netflix.png", isFavorite:true, isBusiness:false, folder:"Entertainment" },
+    { id:"8", name:"Instagram", email:"name@email.com", favicon:"assets/instagram.png", isFavorite:true, isBusiness:true, folder:"Social media" },
+    { id:"9", name:"Apple ID", email:"name@email.com", favicon:"assets/appleid.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"10", name:"Atlassian - Shire Corp", email:"name@email.com", favicon:"assets/atlassian.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"11", name:"AWS Group", email:"name@email.com", favicon:"assets/aws.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"12", name:"Costco membership", email:"name@email.com", favicon:"assets/costco.png", isFavorite:false, isBusiness:false, folder:"Shopping" },
+    { id:"13", name:"Contracts", email:"name@email.com", favicon:"assets/contracts.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"14", name:"Hubspot", email:"name@email.com", favicon:"assets/hubspot.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"15", name:"Dropbox", email:"name@email.com", favicon:"assets/dropbox.png", isFavorite:false, isBusiness:false, folder:"Personal" },
+    { id:"16", name:"Slack - Work", email:"name@email.com", favicon:"assets/slack.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"17", name:"Figma", email:"name@email.com", favicon:"assets/figma.png", isFavorite:false, isBusiness:true, folder:"Work" },
+    { id:"18", name:"Notion", email:"name@email.com", favicon:"assets/notion.png", isFavorite:false, isBusiness:false, folder:"Personal" },
+  ];
+  MY_FOLDERS = ["Work", "Social media", "Entertainment", "Shopping", "Personal"];
+  TYPE_OPTIONS = ["Login", "Card", "Bank account", "Identity", "License", "Passport", "Secure note", "SSH key"];
+  SHARED_FOLDERS = ["Engineering", "Design", "Marketing", "Finance", "IT & Security"];
+  FILTER_VAULTS = [
+    { id: "My vault", tileBg: "#fa6216", icon: "bwi-user" },
+    { id: "Acme Corporation", tileBg: "#6a5acd", icon: "bwi-business" },
+  ];
+
+  state = {
+    openBeacon: null,
+    dismissed: [],
+    screen: "vault",
+    view: "all",
+    showSwitcher: false,
+    showFilter: false,
+    showNewItem: false,
+    searchCollapsed: false,
+    formVault: "My vault",
+    showFormVault: false,
+    formFolder: null,
+    showFormFolder: false,
+    formShared: [],
+    showFormShared: false,
+    showNewFolder: false,
+    newFolderName: "",
+    newFolderDesc: "",
+    customFolders: [],
+    filterStep: "main",
+    pendingType: null,
+    pendingVaults: [],
+    pendingShared: [],
+    pendingFolders: [],
+    appliedType: null,
+    appliedVaults: [],
+    appliedShared: [],
+    appliedFolders: [],
+    genType: "password",
+    genLength: 14,
+    password: "123fff777jstyzlmnoq%",
+    genOpts: { avoid: true, upper: true, lower: true, numbers: true, special: true },
+  };
+
+  visible(items) {
+    const s = this.state;
+    let r = items;
+    if (s.view === "acmeCorp") r = r.filter(i => i.isBusiness);
+    else if (s.view === "myVault") r = r.filter(i => !i.isBusiness);
+    // Vault filter: My vault = personal items, Acme Corporation = business items
+    if (s.appliedVaults.length) {
+      r = r.filter(i => {
+        const vaultName = i.isBusiness ? "Acme Corporation" : "My vault";
+        return s.appliedVaults.includes(vaultName);
+      });
+    }
+    if (s.appliedFolders.length) r = r.filter(i => i.folder && s.appliedFolders.includes(i.folder));
+    return r;
+  }
+
+  colorFor(ch) {
+    if (/[0-9]/.test(ch)) return "#175ddc";
+    if (/[^a-zA-Z0-9]/.test(ch)) return "#cb263a";
+    return "#1b2029";
+  }
+
+  regenerate() {
+    const sets = { upper: "ABCDEFGHJKLMNPQRSTUVWXYZ", lower: "abcdefghijkmnopqrstuvwxyz", numbers: "23456789", special: "!@#$%^&*" };
+    const o = this.state.genOpts;
+    let pool = "";
+    if (o.upper) pool += sets.upper;
+    if (o.lower) pool += sets.lower;
+    if (o.numbers) pool += sets.numbers;
+    if (o.special) pool += sets.special;
+    if (!pool) pool = sets.lower;
+    let p = "";
+    for (let i = 0; i < this.state.genLength; i++) p += pool[Math.floor(Math.random() * pool.length)];
+    this.setState({ password: p });
+  }
+
+  calloutRef = React.createRef();
+  listRef = React.createRef();
+  _lastScroll = 0;
+
+  onListScroll = (e) => {
+    const top = e.target.scrollTop;
+    const last = this._lastScroll;
+    this._lastScroll = top;
+    const collapsed = this.state.searchCollapsed;
+    // Collapse once scrolled past a small threshold while moving down;
+    // expand as soon as the user scrolls up or returns near the top.
+    if (!collapsed && top > 48 && top > last + 2) {
+      this.setState({ searchCollapsed: true, openBeacon: this.state.openBeacon === "filter" ? null : this.state.openBeacon });
+    } else if (collapsed && (top < last - 2 || top <= 8)) {
+      this.setState({ searchCollapsed: false });
+    }
+  };
+
+  lsKey() { return "bw_berry_dismissed_" + (this.props.featureVersion || "2024.10"); }
+  loadDismissed() {
+    try { const raw = localStorage.getItem(this.lsKey()); return raw ? JSON.parse(raw) : []; }
+    catch (e) { return []; }
+  }
+
+  componentDidMount() { this.setState({ dismissed: this.loadDismissed() }); }
+
+  componentDidUpdate(prevProps) {
+    const pp = prevProps || {};
+    if (pp.featureVersion !== this.props.featureVersion) {
+      this.setState({ dismissed: this.loadDismissed(), openBeacon: null });
+    }
+    if (this._prevOpen !== this.state.openBeacon) {
+      this._prevOpen = this.state.openBeacon;
+      if (this.state.openBeacon && this.calloutRef.current) {
+        try { this.calloutRef.current.focus({ preventScroll: true }); } catch (e) {}
+      }
+    }
+  }
+
+  toggleBeacon(id) { this.setState(s => ({ openBeacon: s.openBeacon === id ? null : id })); }
+
+  dismissBeacon(id) {
+    const d = Array.from(new Set([...this.state.dismissed, id]));
+    try { localStorage.setItem(this.lsKey(), JSON.stringify(d)); } catch (e) {}
+    this.setState(s => ({ dismissed: d, openBeacon: s.openBeacon === id ? null : s.openBeacon }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const VIEW_LABELS = { all: "All items", myVault: "My vault", acmeCorp: "Acme Corporation" };
+
+    const autofillItems = this.ITEMS.filter(i => i.isAutofill);
+    const nonAuto = this.ITEMS.filter(i => !i.isAutofill);
+    const autofill = this.visible(autofillItems);
+    const favorites = this.visible(nonAuto.filter(i => i.isFavorite));
+    const others = this.visible(nonAuto.filter(i => !i.isFavorite));
+    const totalCount = autofill.length + favorites.length + others.length;
+
+    const navDefs = [
+      { key: "vault", label: "Vault", icon: "bwi-vault" },
+      { key: "send", label: "Send", icon: "bwi-send" },
+      { key: "generator", label: "Generator", icon: "bwi-generate" },
+      { key: "settings", label: "Settings", icon: "bwi-cog" },
+    ];
+    const navItems = navDefs.map(d => ({
+      label: d.label, icon: d.icon,
+      color: s.screen === d.key ? "#175ddc" : "#45556c",
+      weight: s.screen === d.key ? "600" : "400",
+      onClick: () => this.setState({ screen: d.key, showSwitcher: false, showFilter: false }),
+    }));
+
+    const VIEW_TILES = {
+      all: { bg: "#175ddc", icon: "bwi-list" },
+      myVault: { bg: "#fa6216", icon: "bwi-user" },
+      acmeCorp: { bg: "#6a5acd", icon: "bwi-business" },
+    };
+    const viewOptions = Object.keys(VIEW_LABELS).map(id => ({
+      label: VIEW_LABELS[id], active: s.view === id,
+      tileBg: VIEW_TILES[id].bg, icon: VIEW_TILES[id].icon,
+      color: s.view === id ? "#175ddc" : "#0f172b",
+      weight: s.view === id ? "500" : "400",
+      onClick: () => this.setState({ view: id, showSwitcher: false }),
+    }));
+
+    const filterRows = [
+      { icon: "bwi-list", name: "Type", valueText: s.pendingType || "", count: s.pendingType ? 1 : 0, onClick: () => this.setState({ filterStep: "type" }) },
+      { icon: "bwi-vault", name: "Vault", valueText: s.pendingVaults.join(", "), count: s.pendingVaults.length, onClick: () => this.setState({ filterStep: "vault" }) },
+      { icon: "bwi-collection-shared", name: "Shared folders", valueText: s.pendingShared.join(", "), count: s.pendingShared.length, onClick: () => this.setState({ filterStep: "shared" }) },
+      { icon: "bwi-folder", name: "My folders", valueText: s.pendingFolders.join(", "), count: s.pendingFolders.length, onClick: () => this.setState({ filterStep: "folders" }) },
+    ].map(r => ({ icon: r.icon, name: r.name, valueText: r.valueText, hasValue: r.count > 0, badge: r.count, hasBadge: r.count > 0, onClick: r.onClick }));
+
+    const typeOptions = this.TYPE_OPTIONS.map(t => ({
+      label: t, selected: s.pendingType === t,
+      ringBorder: s.pendingType === t ? "2px solid #175ddc" : "1.5px solid #8496b0",
+      onClick: () => this.setState({ pendingType: s.pendingType === t ? null : t }),
+    }));
+
+    const toggleIn = (key, val) => {
+      const set = new Set(s[key]);
+      if (set.has(val)) set.delete(val); else set.add(val);
+      this.setState({ [key]: [...set] });
+    };
+
+    const vaultFilterOptions = this.FILTER_VAULTS.map(v => ({
+      name: v.id, tileBg: v.tileBg, icon: v.icon, selected: s.pendingVaults.includes(v.id),
+      boxBg: s.pendingVaults.includes(v.id) ? "#175ddc" : "#f7f9fa",
+      boxBorder: s.pendingVaults.includes(v.id) ? "1px solid #175ddc" : "1px solid #8496b0",
+      onClick: () => toggleIn("pendingVaults", v.id),
+    }));
+
+    const sharedOptions = this.SHARED_FOLDERS.map(f => ({
+      name: f, selected: s.pendingShared.includes(f),
+      boxBg: s.pendingShared.includes(f) ? "#175ddc" : "#f7f9fa",
+      boxBorder: s.pendingShared.includes(f) ? "1px solid #175ddc" : "1px solid #8496b0",
+      onClick: () => toggleIn("pendingShared", f),
+    }));
+
+    const folderOptions = this.MY_FOLDERS.map(f => ({
+      name: f, selected: s.pendingFolders.includes(f),
+      boxBg: s.pendingFolders.includes(f) ? "#175ddc" : "#f7f9fa",
+      boxBorder: s.pendingFolders.includes(f) ? "1px solid #175ddc" : "1px solid #8496b0",
+      onClick: () => toggleIn("pendingFolders", f),
+    }));
+
+    const chips = [];
+    if (s.appliedType) chips.push({ label: "Type: " + s.appliedType, onRemove: () => this.setState({ appliedType: null }) });
+    s.appliedVaults.forEach(v => chips.push({ label: v, onRemove: () => this.setState({ appliedVaults: s.appliedVaults.filter(x => x !== v) }) }));
+    s.appliedShared.forEach(f => chips.push({ label: f, onRemove: () => this.setState({ appliedShared: s.appliedShared.filter(x => x !== f) }) }));
+    s.appliedFolders.forEach(f => chips.push({ label: f, onRemove: () => this.setState({ appliedFolders: s.appliedFolders.filter(x => x !== f) }) }));
+
+    const filterActive = !!s.appliedType || s.appliedVaults.length > 0 || s.appliedShared.length > 0 || s.appliedFolders.length > 0;
+    const selectedCount = (s.pendingType ? 1 : 0) + s.pendingVaults.length + s.pendingShared.length + s.pendingFolders.length;
+
+    const genTabDefs = [{ id: "password", label: "Password" }, { id: "passphrase", label: "Passphrase" }, { id: "username", label: "Username" }];
+    const genTabs = genTabDefs.map(t => ({
+      label: t.label, active: s.genType === t.id,
+      bg: s.genType === t.id ? "#0c3276" : "transparent",
+      color: s.genType === t.id ? "#ffffff" : "#45556c",
+      weight: s.genType === t.id ? "600" : "500",
+      onClick: () => this.setState({ genType: t.id }),
+    }));
+
+    const swDefs = [
+      { key: "avoid", label: "Avoid look-alike characters" },
+      { key: "upper", label: "Uppercase letters (A\u2013Z)" },
+      { key: "lower", label: "Lowercase letters (a\u2013z)" },
+      { key: "numbers", label: "Numbers (0\u20139)" },
+      { key: "special", label: "Special characters (!@#$%^&*)" },
+    ];
+    const genSwitches = swDefs.map(d => ({
+      label: d.label, on: s.genOpts[d.key],
+      trackBg: s.genOpts[d.key] ? "#175ddc" : "#cbd5e1",
+      justify: s.genOpts[d.key] ? "flex-end" : "flex-start",
+      onToggle: () => this.setState({ genOpts: { ...s.genOpts, [d.key]: !s.genOpts[d.key] } }),
+    }));
+
+    const passwordChars = [...s.password].map(ch => ({ ch, color: this.colorFor(ch) }));
+
+    const settingsItems = [
+      { label: "Account security", icon: "bwi-lock" },
+      { label: "Autofill", icon: "bwi-sign-in" },
+      { label: "Notifications", icon: "bwi-file-text" },
+      { label: "Vault options", icon: "bwi-vault" },
+      { label: "Appearance", icon: "bwi-brush" },
+      { label: "About", icon: "bwi-info-circle" },
+      { label: "Download Bitwarden apps", icon: "bwi-download" },
+      { label: "More from Bitwarden", icon: "bwi-grid" },
+    ];
+
+    const sends = [{ name: "Bank info" }, { name: "Pay stub" }, { name: "Wifi password" }];
+
+    const FORM_VAULTS = [
+      { id: "My vault", tileBg: "#fa6216", icon: "bwi-user" },
+      { id: "Acme Corporation", tileBg: "#6a5acd", icon: "bwi-business" },
+    ];
+    const formVaultCurrent = FORM_VAULTS.find(v => v.id === s.formVault) || FORM_VAULTS[0];
+    const formVaultOptions = FORM_VAULTS.map(v => ({
+      label: v.id, tileBg: v.tileBg, icon: v.icon, active: s.formVault === v.id,
+      onClick: () => this.setState({ formVault: v.id, showFormVault: false, showFormFolder: false, showFormShared: false }),
+    }));
+
+    const formIsMyVault = s.formVault === "My vault";
+    const formIsAcme = s.formVault === "Acme Corporation";
+
+    const myFoldersAll = [...this.MY_FOLDERS, ...s.customFolders];
+    const formFolderOptions = myFoldersAll.map(f => ({
+      label: f, active: s.formFolder === f,
+      onClick: () => this.setState({ formFolder: f, showFormFolder: false }),
+    }));
+    const formFolderLabel = s.formFolder || "Select";
+    const formFolderColor = s.formFolder ? "#0f172b" : "#62748e";
+
+    const formSharedOptions = this.SHARED_FOLDERS.map(f => ({
+      name: f, selected: s.formShared.includes(f),
+      boxBg: s.formShared.includes(f) ? "#175ddc" : "#f7f9fa",
+      boxBorder: s.formShared.includes(f) ? "1px solid #175ddc" : "1px solid #8496b0",
+      onClick: () => this.setState(st => {
+        const set = new Set(st.formShared);
+        if (set.has(f)) set.delete(f); else set.add(f);
+        return { formShared: [...set] };
+      }),
+    }));
+    const formSharedLabel = s.formShared.length ? s.formShared.join(", ") : "Select";
+    const formSharedColor = s.formShared.length ? "#0f172b" : "#62748e";
+    const newFolderCanSave = s.newFolderName.trim().length > 0;
+
+    const newItemTypes = [
+      { label: "Login", sub: "Website or app", icon: "bwi-lock", onClick: () => this.setState({ screen: "addLogin", showNewItem: false }) },
+      { label: "Card", sub: "Credit or debit card", icon: "bwi-credit-card", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "Bank account", sub: "Banking details", icon: "bwi-bank", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "Identity", sub: "Personal info", icon: "bwi-user", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "License", sub: "Drivers license or ID", icon: "bwi-id-card", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "Passport", sub: "Travel document", icon: "bwi-passport", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "Secure note", sub: "Important text", icon: "bwi-sticky-note", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "SSH key", sub: "Server login token", icon: "bwi-key", onClick: () => this.setState({ showNewItem: false }) },
+      { label: "My folder", sub: "Organize your items", icon: "bwi-folder", onClick: () => this.setState({ showNewItem: false }) },
+    ];
+
+    const beaconsEnabled = this.props.beaconsEnabled ?? true;
+    const beaconColor = this.props.beaconColor || "#e60076";
+    const baseVault = s.screen === "vault" && !s.showFilter && !s.showNewItem && !s.showSwitcher;
+    const BEACON_DEFS = [
+      { id: "switcher", title: "Know where items live", desc: "See which vault each credential belongs to while browsing.", benefit: "Organize credentials with more confidence.", isNew: true },
+      { id: "filter", title: "Search first, filter faster", desc: "Search and filters are easier to find, with key actions grouped together.", benefit: "Find items faster, with room to grow as more filters are added.", isNew: true },
+      { id: "create", title: "Create items faster", desc: "The primary action moved to a more prominent spot.", benefit: "Add logins, cards, notes, and more with less effort.", isNew: true },
+    ];
+    const mkBeacon = (def) => {
+      const open = s.openBeacon === def.id;
+      let visible = beaconsEnabled && baseVault && !s.dismissed.includes(def.id);
+      // The filter beacon anchors to the search row, which hides on scroll.
+      if (def.id === "filter" && s.searchCollapsed) visible = false;
+      return {
+        visible, open, pulse: visible && !open, color: beaconColor,
+        title: def.title, desc: def.desc, benefit: def.benefit, isNew: def.isNew,
+        ariaLabel: (def.isNew ? "New feature: " : "Feature highlight: ") + def.title,
+        toggle: () => this.toggleBeacon(def.id),
+        dismiss: (e) => { if (e) e.stopPropagation(); this.dismissBeacon(def.id); },
+        learnMore: (e) => { if (e) e.preventDefault(); },
+        onKey: (e) => { if (e.key === "Escape") { e.stopPropagation(); this.setState({ openBeacon: null }); } },
+      };
+    };
+    const bSwitcher = mkBeacon(BEACON_DEFS[0]);
+    const bFilter = mkBeacon(BEACON_DEFS[1]);
+    const bCreate = mkBeacon(BEACON_DEFS[2]);
+    const anyBeaconVisible = bSwitcher.visible || bFilter.visible || bCreate.visible;
+
+    return {
+      bSwitcher, bFilter, bCreate, anyBeaconVisible, calloutRef: this.calloutRef,
+      listRef: this.listRef, onListScroll: this.onListScroll,
+      searchMaxHeight: s.searchCollapsed ? "0px" : "76px",
+      searchTranslate: s.searchCollapsed ? "-100%" : "0",
+      isVault: s.screen === "vault",
+      isSend: s.screen === "send",
+      isGenerator: s.screen === "generator",
+      isSettings: s.screen === "settings",
+      isAddLogin: s.screen === "addLogin",
+      showBottomNav: s.screen !== "addLogin",
+      newItemTypes,
+      showNewItem: s.showNewItem,
+      viewLabel: VIEW_LABELS[s.view],
+      othersLabel: VIEW_LABELS[s.view],
+      totalCount,
+      autofill, favorites, others,
+      autofillCount: autofill.length, favoritesCount: favorites.length, othersCount: others.length,
+      hasAutofill: autofill.length > 0, hasFavorites: favorites.length > 0, hasOthers: others.length > 0,
+      isEmpty: totalCount === 0,
+      chevronRotate: s.showSwitcher ? "180deg" : "0deg",
+      filterIconColor: filterActive ? "#175ddc" : "#0f172b",
+      filterActive,
+      chips, hasChips: chips.length > 0,
+      navItems,
+      viewOptions,
+      showSwitcher: s.showSwitcher,
+      switcherTop: 82,
+      showFilter: s.showFilter,
+      stepMain: s.filterStep === "main",
+      stepType: s.filterStep === "type",
+      stepVault: s.filterStep === "vault",
+      stepShared: s.filterStep === "shared",
+      stepFolders: s.filterStep === "folders",
+      filterRows, typeOptions, vaultFilterOptions, sharedOptions, folderOptions,
+      selectedCount,
+      selectedLabel: selectedCount === 1 ? "1 selected" : selectedCount + " selected",
+      genTabs, genSwitches, passwordChars, genLength: s.genLength,
+      settingsItems, sends,
+      navSettings: () => this.setState({ screen: "settings", showSwitcher: false, showFilter: false }),
+      toggleSwitcher: () => this.setState({ showSwitcher: !s.showSwitcher }),
+      closeSwitcher: () => this.setState({ showSwitcher: false }),
+      openFilter: () => this.setState({ showFilter: true, filterStep: "main", pendingType: s.appliedType, pendingVaults: [...s.appliedVaults], pendingShared: [...s.appliedShared], pendingFolders: [...s.appliedFolders] }),
+      closeFilter: () => this.setState({ showFilter: false }),
+      backToMain: () => this.setState({ filterStep: "main" }),
+      applyMain: () => this.setState({ appliedType: s.pendingType, appliedVaults: [...s.pendingVaults], appliedShared: [...s.pendingShared], appliedFolders: [...s.pendingFolders], showFilter: false }),
+      clearAllFilters: () => this.setState({ pendingType: null, pendingVaults: [], pendingShared: [], pendingFolders: [] }),
+      regenerate: () => this.regenerate(),
+      formVaultLabel: formVaultCurrent.id,
+      formVaultTileBg: formVaultCurrent.tileBg,
+      formVaultIcon: formVaultCurrent.icon,
+      formVaultOptions,
+      showFormVault: s.showFormVault,
+      toggleFormVault: () => this.setState({ showFormVault: !s.showFormVault, showFormFolder: false, showFormShared: false }),
+      closeFormVault: () => this.setState({ showFormVault: false }),
+      formIsMyVault, formIsAcme,
+      formFolderOptions, formFolderLabel, formFolderColor,
+      formSharedOptions, formSharedLabel, formSharedColor,
+      showFormFolder: s.showFormFolder,
+      showFormShared: s.showFormShared,
+      toggleFormFolder: () => this.setState({ showFormFolder: !s.showFormFolder, showFormShared: false }),
+      closeFormFolder: () => this.setState({ showFormFolder: false }),
+      toggleFormShared: () => this.setState({ showFormShared: !s.showFormShared, showFormFolder: false }),
+      closeFormShared: () => this.setState({ showFormShared: false }),
+      showNewFolder: s.showNewFolder,
+      newFolderName: s.newFolderName,
+      newFolderDesc: s.newFolderDesc,
+      newFolderSaveBg: newFolderCanSave ? "#175ddc" : "#8ab0e8",
+      newFolderCursor: newFolderCanSave ? "pointer" : "not-allowed",
+      openNewFolder: () => this.setState({ showNewFolder: true, showFormFolder: false }),
+      closeNewFolder: () => this.setState({ showNewFolder: false }),
+      setNewFolderName: (e) => this.setState({ newFolderName: e.target.value }),
+      setNewFolderDesc: (e) => this.setState({ newFolderDesc: e.target.value }),
+      saveNewFolder: () => {
+        const name = this.state.newFolderName.trim();
+        if (!name) return;
+        this.setState(st => ({
+          customFolders: st.customFolders.includes(name) ? st.customFolders : [...st.customFolders, name],
+          formFolder: name, showNewFolder: false, newFolderName: "", newFolderDesc: "",
+        }));
+      },
+      openNewItem: () => this.setState({ showNewItem: true }),
+      closeNewItem: () => this.setState({ showNewItem: false }),
+      backFromForm: () => this.setState({ screen: "vault" }),
+    };
+  }
+}
+</script>
+</body>
+</html>
